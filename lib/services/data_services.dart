@@ -65,6 +65,12 @@ class DataService {
     }
   }
 
+  static Future<void> deleteRuangan(int id) async {
+    await http.delete(Uri.parse('${Endpoints.ruanganDelete}/$id'),
+        headers: {'Content-type': 'application/json'});
+  }
+
+
   //post login with email and password
   static Future<http.Response> sendLoginData(
       String email, String password) async {

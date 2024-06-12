@@ -152,7 +152,7 @@ class _TambahRuanganScreenState extends State<TambahRuanganScreen> {
                     child: const Text('Save'),
                   );
                 },
-              )
+              ),
             ],
           ),
         ),

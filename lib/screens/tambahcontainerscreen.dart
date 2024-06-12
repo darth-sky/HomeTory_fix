@@ -1,8 +1,19 @@
+import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
+import 'package:hometory/cubit/container/cubit/containers_cubit.dart';
+import 'package:hometory/cubit/ruangan_cubit.dart';
+import 'package:hometory/endpoints/endpoints.dart';
+import 'package:hometory/screens/insideRuangan.dart';
+import 'package:http/http.dart';
+import 'package:image_picker/image_picker.dart';
 
 class TambahContainerScreen extends StatefulWidget {
-  const TambahContainerScreen({Key? key}) : super(key: key);
+  const TambahContainerScreen({super.key, required this.idInsideRuangan});
+
+  final int idInsideRuangan;
 
   @override
   _TambahContainerScreenState createState() => _TambahContainerScreenState();
@@ -10,6 +21,92 @@ class TambahContainerScreen extends StatefulWidget {
 
 class _TambahContainerScreenState extends State<TambahContainerScreen> {
   TextEditingController _containerController = TextEditingController();
+
+  File? galleryFile;
+  final picker = ImagePicker();
+
+  _showPicker({
+    required BuildContext context,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Wrap(
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Photo Library'),
+                onTap: () {
+                  getImage(ImageSource.gallery);
+                  Navigator.of(context).pop();
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_camera),
+                title: const Text('Camera'),
+                onTap: () {
+                  getImage(ImageSource.camera);
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future getImage(
+    ImageSource img,
+  ) async {
+    final pickedFile = await picker.pickImage(source: img);
+    XFile? xfilePick = pickedFile;
+    setState(
+      () {
+        if (xfilePick != null) {
+          galleryFile = File(pickedFile!.path);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Nothing is selected')));
+        }
+      },
+    );
+  }
+
+  Future<void> _postDataWithImage(BuildContext context, int idUser) async {
+    if (galleryFile == null) {
+      return; // Handle case where no image is selected
+    }
+
+    var request =
+        MultipartRequest('POST', Uri.parse(Endpoints.containerCreate));
+    debugPrint(idUser.toString());
+    debugPrint(galleryFile!.path.toString());
+    debugPrint(_containerController.text);
+    request.fields['id_ruangan'] = idUser.toString();
+    request.fields['nama_container'] = _containerController.text;
+
+    var multipartFile = await MultipartFile.fromPath(
+      'gambar_container',
+      galleryFile!.path,
+    );
+    request.files.add(multipartFile);
+
+    request.send().then((response) {
+      // Handle response (success or error)
+      if (response.statusCode == 201) {
+        debugPrint('Data and image posted successfully!');
+        context.read<ContainersCubit>().fetchContainersCubit();
+        Navigator.pop(context);
+        // Navigator.pushReplacementNamed(context, '/inside-ruangan');
+        // Navigator.pushReplacement(context,
+        //                 MaterialPageRoute(builder: (context) => InsideRuangan(idInsideRuangan: ,)));
+      } else {
+        debugPrint('Error posting data: ${response.statusCode}');
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,14 +122,16 @@ class _TambahContainerScreenState extends State<TambahContainerScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  _showPicker(context: context);
+                },
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.all(10.0),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(18.0),
                   ),
-                  minimumSize:
-                      const Size(110.0, 30.0), // Sesuaikan dengan keinginan Anda
+                  minimumSize: const Size(
+                      110.0, 30.0), // Sesuaikan dengan keinginan Anda
                 ),
                 child: const Icon(
                   Icons.camera_alt,
@@ -51,9 +150,14 @@ class _TambahContainerScreenState extends State<TambahContainerScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {},
-                child: const Text('Tambah'),
-              ),
+                    onPressed: () {
+                      String containerName = _containerController.text;
+                      if (containerName.isNotEmpty) {
+                        _postDataWithImage(context, widget.idInsideRuangan);
+                      }
+                    },
+                    child: const Text('Save'),
+                  ),
             ],
           ),
         ),

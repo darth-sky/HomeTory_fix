@@ -114,7 +114,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   child: Text(
-                    'Login Test',
+                    'Login',
                     style: GoogleFonts.poppins(
                       color: Colors.black,
                       fontSize: 18,

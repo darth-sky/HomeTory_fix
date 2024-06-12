@@ -3,19 +3,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hometory/cubit/barang_dlm_ruangan/cubit/barang_dlm_ruangan_cubit.dart';
 import 'package:hometory/cubit/container/cubit/containers_cubit.dart';
 import 'package:hometory/cubit/ruangan_cubit.dart';
-import 'package:hometory/dto/containers.dart';
+import 'package:hometory/dto/barang_dlm_ruangan.dart';
 import 'package:hometory/endpoints/endpoints.dart';
 
-class InsideContainer extends StatefulWidget {
-  const InsideContainer({super.key, required this.idInsideContianer});
+class InsideBarangDlmRuangan extends StatefulWidget {
+  const InsideBarangDlmRuangan({super.key, required this.idInsideBarangDlmRuangan});
 
-  final int idInsideContianer;
+  final int idInsideBarangDlmRuangan;
 
   @override
-  _InsideContainerState createState() => _InsideContainerState();
+  _InsideBarangDlmRuanganState createState() => _InsideBarangDlmRuanganState();
 }
 
-class _InsideContainerState extends State<InsideContainer> {
+class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
+
   @override
   void initState() {
     // debugPrint(widget.idInsideRuangan.toString());
@@ -29,10 +30,10 @@ class _InsideContainerState extends State<InsideContainer> {
 
   @override
   Widget build(BuildContext context) {
-    int? idContainer = widget.idInsideContianer;
+    int? idBarangDlmRuangan = widget.idInsideBarangDlmRuangan;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('insideContainer'),
+        title: const Text('insideBarangDlmRuangan'),
         backgroundColor: Colors.blueGrey,
         actions: [
           IconButton(
@@ -55,14 +56,14 @@ class _InsideContainerState extends State<InsideContainer> {
               icon: const Icon(Icons.edit)),
         ],
       ),
-      body: BlocBuilder<ContainersCubit, ContainersState>(
+      body: BlocBuilder<BarangDlmRuanganCubit, BarangDlmRuanganState>(
         builder: (context, state) {
-          Containers? filterContianer;
+          Barang_dlm_ruangan? filterBarangDlmRuangan;
           String imageUrl = 'assets/images/lemari.jpg';
-          if (idContainer != null) {
-            filterContianer = state.ListOfContainers.firstWhere((element) => element.id_containers == idContainer);
+          if (idBarangDlmRuangan != null) {
+            filterBarangDlmRuangan = state.ListOfBarang_dlm_ruangan.firstWhere((element) => element.id_barang_dlm_ruangan == idBarangDlmRuangan);
             imageUrl = Uri.parse(
-                    '${Endpoints.baseUAS}/static/img/${filterContianer.gambar_containers}')
+                    '${Endpoints.baseUAS}/static/img/${filterBarangDlmRuangan.gambar_barang_dlm_ruangan}')
                 .toString();
           }
           return Column(
@@ -87,6 +88,7 @@ class _InsideContainerState extends State<InsideContainer> {
               const SizedBox(
                 height: 10,
               ),
+              Text(filterBarangDlmRuangan!.nama_barang_dlm_ruangan),
             ],
           );
         },
