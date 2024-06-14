@@ -12,40 +12,48 @@ class BarangWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: 100,
-      margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
-      padding: const EdgeInsets.all(5),
-      decoration: BoxDecoration(
-        color: Colors.blueGrey[100],
-        borderRadius: BorderRadius.circular(10),
+    return Card(
+      elevation: 8.0, // Add shadow to the card
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.0),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Image.network(
-              imageUrl,
-              errorBuilder: (context, error, stackTrace) =>
-                  const Icon(Icons.error),
-              fit: BoxFit.fitHeight,
-              width: 100,
-              height: 100,
+      margin: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Image.network(
+                imageUrl,
+                errorBuilder: (context, error, stackTrace) =>
+                    const Icon(Icons.error, color: Colors.red),
+                fit: BoxFit.cover,
+                width: 80,
+                height: 80,
+              ),
             ),
-          ),
-          const SizedBox(
-            width: 10,
-          ),
-          Text(
-            barangName,
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
+            const SizedBox(
+              width: 15,
             ),
-          ),
-        ],
+            Expanded(
+              child: Text(
+                barangName,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -64,8 +72,14 @@ class PointItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Icon(icon),
-      title: Text(label),
+      leading: Icon(icon, color: Colors.blueGrey),
+      title: Text(
+        label,
+        style: const TextStyle(
+          fontSize: 16,
+          color: Colors.black87,
+        ),
+      ),
     );
   }
 }

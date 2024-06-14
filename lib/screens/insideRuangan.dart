@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hometory/components/barangWidget.dart';
 import 'package:hometory/components/containersWidget.dart';
@@ -28,15 +30,50 @@ class InsideRuangan extends StatefulWidget {
 class _InsideRuanganState extends State<InsideRuangan> {
   // Future<List<Barang_dlm_ruangan>>? _barangDlmRuangan;
 
+  int currentPage = 1;
+
   @override
   void initState() {
     debugPrint(widget.idInsideRuangan.toString());
     super.initState();
     context.read<RuanganCubit>().fetchRuanganCubit();
     context.read<ContainersCubit>().fetchContainersCubit();
-    context.read<BarangDlmRuanganCubit>().fetchBarangDlmRuanganCubit();
+    context
+        .read<BarangDlmRuanganCubit>()
+        .fetchBarangDlmRuanganCubit(currentPage, "", widget.idInsideRuangan);
     // _barangDlmRuangan =
     //     DataService.fetchBarangDlmRuanganId(widget.idInsideRuangan);
+  }
+
+  void _fetchData() {
+    context
+        .read<BarangDlmRuanganCubit>()
+        .fetchBarangDlmRuanganCubit(currentPage, "", widget.idInsideRuangan);
+  }
+
+  void _incrementPage() {
+    setState(() {
+      currentPage++;
+      _fetchData();
+    });
+  }
+
+  void _decrementPage() {
+    if (currentPage > 1) {
+      setState(() {
+        currentPage--;
+        _fetchData();
+      });
+    }
+  }
+
+  void _resetPages() {
+    if (currentPage > 1) {
+      setState(() {
+        currentPage = 1;
+        _fetchData();
+      });
+    }
   }
 
   @override
@@ -46,6 +83,13 @@ class _InsideRuanganState extends State<InsideRuangan> {
       appBar: AppBar(
         title: const Text('InsideRuangan'),
         backgroundColor: Colors.blueGrey,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+            _resetPages();
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
         actions: [
           IconButton(
               onPressed: () {
@@ -149,7 +193,8 @@ class _InsideRuanganState extends State<InsideRuangan> {
                                             MaterialPageRoute(
                                           builder: (context) {
                                             return InsideContainer(
-                                              idInsideContianer: item.id_containers,
+                                              idInsideContianer:
+                                                  item.id_containers,
                                             );
                                           },
                                         ));
@@ -163,46 +208,71 @@ class _InsideRuanganState extends State<InsideRuangan> {
                                 );
                               },
                             ),
-                            BlocBuilder<BarangDlmRuanganCubit,
-                                BarangDlmRuanganState>(
-                              builder: (context, state) {
-                                List<Barang_dlm_ruangan> filterBarangDlmRuangan;
-                                if (idRuangan != null) {
-                                  filterBarangDlmRuangan =
-                                      state.ListOfBarang_dlm_ruangan.where(
-                                          (element) =>
-                                              element.id_ruangan ==
-                                              idRuangan).toList();
-                                } else {
-                                  return const SizedBox();
-                                }
-                                return ListView.builder(
-                                  itemCount: filterBarangDlmRuangan.length,
-                                  itemBuilder: (context, index) {
-                                    var item = filterBarangDlmRuangan[index];
-                                    final imageBarangDlmRuangan = Uri.parse(
-                                            '${Endpoints.baseUAS}/static/img/${item.gambar_barang_dlm_ruangan}')
-                                        .toString();
-                                    return GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                          builder: (context) {
-                                            return InsideBarangDlmRuangan(
-                                              idInsideBarangDlmRuangan: item.id_barang_dlm_ruangan,
-                                            );
+                            Column(children: [
+                              Expanded(
+                                child: BlocBuilder<BarangDlmRuanganCubit,
+                                    BarangDlmRuanganState>(
+                                  builder: (context, state) {
+                                    List<Barang_dlm_ruangan>
+                                        filterBarangDlmRuangan;
+                                    if (idRuangan != null) {
+                                      filterBarangDlmRuangan =
+                                          state.ListOfBarang_dlm_ruangan.where(
+                                              (element) =>
+                                                  element.id_ruangan ==
+                                                  idRuangan).toList();
+                                    } else {
+                                      return const SizedBox();
+                                    }
+                                    return ListView.builder(
+                                      itemCount: filterBarangDlmRuangan.length,
+                                      itemBuilder: (context, index) {
+                                        var item =
+                                            filterBarangDlmRuangan[index];
+                                        final imageBarangDlmRuangan = Uri.parse(
+                                                '${Endpoints.baseUAS}/static/img/${item.gambar_barang_dlm_ruangan}')
+                                            .toString();
+                                        return GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(context,
+                                                MaterialPageRoute(
+                                              builder: (context) {
+                                                return InsideBarangDlmRuangan(
+                                                  idInsideBarangDlmRuangan: item
+                                                      .id_barang_dlm_ruangan,
+                                                  idRuangan: item.id_ruangan,
+                                                  currentPages: currentPage,
+                                                );
+                                              },
+                                            ));
                                           },
-                                        ));
+                                          child: BarangWidget(
+                                            imageUrl: imageBarangDlmRuangan,
+                                            barangName:
+                                                item.nama_barang_dlm_ruangan,
+                                          ),
+                                        );
                                       },
-                                      child: BarangWidget(
-                                        imageUrl: imageBarangDlmRuangan,
-                                        barangName: item.nama_barang_dlm_ruangan,
-                                      ),
                                     );
                                   },
-                                );
-                              },
-                            ),
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  IconButton(
+                                    icon: Icon(Icons.arrow_back),
+                                    onPressed: _decrementPage,
+                                  ),
+                                  Text('Page $currentPage'),
+                                  IconButton(
+                                    icon: Icon(Icons.arrow_forward),
+                                    onPressed: _incrementPage,
+                                  ),
+                                ],
+                              ),
+                            ]),
                           ],
                         ),
                       ),

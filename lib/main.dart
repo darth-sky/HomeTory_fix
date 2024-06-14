@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
+import 'package:hometory/cubit/barang_dlm_container/cubit/barang_dlm_container_cubit.dart';
 import 'package:hometory/cubit/barang_dlm_ruangan/cubit/barang_dlm_ruangan_cubit.dart';
 import 'package:hometory/cubit/container/cubit/containers_cubit.dart';
 import 'package:hometory/cubit/ruangan_cubit.dart';
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<BarangDlmRuanganCubit>(
           create: (context) => BarangDlmRuanganCubit(),
         ),
+        BlocProvider<BarangDlmContainerCubit>(create: (context) => BarangDlmContainerCubit(),),
         BlocProvider<AuthCubit>(create: (context) => AuthCubit()),
       ],
       child: MaterialApp(

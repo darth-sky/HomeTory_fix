@@ -2,27 +2,27 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
-import 'package:hometory/cubit/barang_dlm_ruangan/cubit/barang_dlm_ruangan_cubit.dart';
+import 'package:hometory/cubit/barang_dlm_container/cubit/barang_dlm_container_cubit.dart';
 import 'package:hometory/endpoints/endpoints.dart';
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 
-class TambahItemScreen extends StatefulWidget {
-  const TambahItemScreen({super.key, required this.idInsideRuangan});
+class TambahbarangDlmContainer extends StatefulWidget {
+  const TambahbarangDlmContainer({super.key, required this.idInsideContainer});
 
-  final int idInsideRuangan;
+  final int idInsideContainer;
 
   @override
-  _TambahItemScreenState createState() => _TambahItemScreenState();
+  _TambahbarangDlmContainerState createState() =>
+      _TambahbarangDlmContainerState();
 }
 
-class _TambahItemScreenState extends State<TambahItemScreen> {
+class _TambahbarangDlmContainerState extends State<TambahbarangDlmContainer> {
   TextEditingController _itemController = TextEditingController();
   TextEditingController _itemQtyController = TextEditingController();
   TextEditingController _descItemController = TextEditingController();
-
-  String _selectedCategory = 'lain-lain'; // Default value for dropdown
+  
+  String _selectedCategory = 'lain-lain';
 
   File? galleryFile;
   final picker = ImagePicker();
@@ -82,19 +82,18 @@ class _TambahItemScreenState extends State<TambahItemScreen> {
     }
 
     var request =
-        MultipartRequest('POST', Uri.parse(Endpoints.barangDlmRuanganCreate));
+        MultipartRequest('POST', Uri.parse(Endpoints.barangDlmContainerCreate));
     debugPrint(idUser.toString());
     debugPrint(galleryFile!.path.toString());
     debugPrint(_itemController.text);
-    request.fields['id_ruangan'] = idUser.toString();
-    request.fields['nama_barang_dlm_ruangan'] = _itemController.text;
-    request.fields['desc_barang_dlm_ruangan'] = _descItemController.text;
-    request.fields['qnty_barang_dlm_ruangan'] = _itemQtyController.text;
-    request.fields['category_barang_dlm_ruangan'] =
-        _selectedCategory; // Add selected category
+    request.fields['id_container'] = idUser.toString();
+    request.fields['nama_barang_dlm_container'] = _itemController.text;
+    request.fields['desc_barang_dlm_container'] = _descItemController.text;
+    request.fields['qnty_barang_dlm_container'] = _itemQtyController.text;
+    request.fields['category_barang_dlm_container'] = _selectedCategory; // Add selected category
 
     var multipartFile = await MultipartFile.fromPath(
-      'gambar_barang_dlm_ruangan',
+      'gambar_barang_dlm_container',
       galleryFile!.path,
     );
     request.files.add(multipartFile);
@@ -104,9 +103,7 @@ class _TambahItemScreenState extends State<TambahItemScreen> {
       if (response.statusCode == 201) {
         debugPrint('Data and image posted successfully!');
         // context.read<BarangDlmRuanganCubit>().fetchBarangDlmRuanganCubit();
-        context
-            .read<BarangDlmRuanganCubit>()
-            .fetchBarangDlmRuanganCubit(1, "", widget.idInsideRuangan);
+        context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit();
         Navigator.pop(context);
         // Navigator.pushReplacementNamed(context, '/inside-ruangan');
         // Navigator.pushReplacement(context,
@@ -121,7 +118,7 @@ class _TambahItemScreenState extends State<TambahItemScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tambah Item'),
+        title: const Text('Tambah barang container'),
         backgroundColor: Colors.blueGrey,
       ),
       body: Center(
@@ -196,7 +193,7 @@ class _TambahItemScreenState extends State<TambahItemScreen> {
                 onPressed: () {
                   String itemName = _itemController.text;
                   if (itemName.isNotEmpty) {
-                    _postDataWithImage(context, widget.idInsideRuangan);
+                    _postDataWithImage(context, widget.idInsideContainer);
                   }
                 },
                 child: const Text('Save'),

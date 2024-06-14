@@ -5,6 +5,7 @@ import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
 import 'package:hometory/cubit/ruangan_cubit.dart';
 // import 'package:hometory/dto/ruangan.dart';
 import 'package:hometory/endpoints/endpoints.dart';
+import 'package:hometory/screens/addRuangan.dart';
 import 'package:hometory/screens/insideRuangan.dart';
 import 'package:hometory/screens/tambahRuanganscreen.dart';
 // import 'package:hometory/services/data_services.dart';
@@ -72,10 +73,16 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => const TambahRuanganScreen(),
+          //   ),
+          // );
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const TambahRuanganScreen(),
+              builder: (context) => const AddRuangan(),
             ),
           );
         },

@@ -5,6 +5,7 @@ class Barang_dlm_ruangan {
   final String desc_barang_dlm_ruangan;
   final int qnty_barang_dlm_ruangan;
   final String gambar_barang_dlm_ruangan;
+  final String category_barang_dlm_ruangan;
 
   Barang_dlm_ruangan({
     required this.id_barang_dlm_ruangan,
@@ -13,6 +14,7 @@ class Barang_dlm_ruangan {
     required this.desc_barang_dlm_ruangan,
     required this.qnty_barang_dlm_ruangan,
     required this.gambar_barang_dlm_ruangan,
+    required this.category_barang_dlm_ruangan
   });
 
   factory Barang_dlm_ruangan.fromJson(Map<String, dynamic> json) =>
@@ -23,5 +25,8 @@ class Barang_dlm_ruangan {
           desc_barang_dlm_ruangan: json['desc_barang_dlm_ruangan'] as String,
           qnty_barang_dlm_ruangan: json['qnty_barang_dlm_ruangan'] as int,
           gambar_barang_dlm_ruangan:
-              json['gambar_barang_dlm_ruangan'] as String);
+              json['gambar_barang_dlm_ruangan'] as String,
+          category_barang_dlm_ruangan: json['category_barang_dlm_ruangan'] as String,
+              );
+          
 }
