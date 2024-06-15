@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class CustomSearchBox extends StatelessWidget {
   final TextEditingController controller;
-  final Function onChanged;
+  final Function(String) onChanged;
   final Function onClear;
   final String hintText;
 
@@ -16,6 +16,7 @@ class CustomSearchBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
       decoration: BoxDecoration(
         boxShadow: const [
           BoxShadow(
@@ -24,39 +25,28 @@ class CustomSearchBox extends StatelessWidget {
             offset: Offset(0, 4),
           ),
         ],
-        borderRadius: BorderRadius.circular(30.0),
-        gradient: const LinearGradient(
-          colors: [Colors.white,],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        borderRadius: BorderRadius.circular(24.0), // Slightly rounded corners
+        color: Colors.white,
       ),
       child: TextField(
         controller: controller,
-        onChanged: (value) => onChanged(value),
+        onChanged: onChanged,
         decoration: InputDecoration(
           hintText: hintText,
-          filled: true,
-          fillColor: Colors.transparent,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(30.0),
-            borderSide: BorderSide.none,
-          ),
-          hintStyle: const TextStyle(color: Colors.grey),
-          prefixIcon: const Icon(Icons.search, color: Colors.blueGrey),
+          border: InputBorder.none,
+          hintStyle: TextStyle(color: Colors.grey.shade500),
+          prefixIcon: Icon(Icons.search, color: Colors.grey.shade500),
           suffixIcon: controller.text.isNotEmpty
               ? IconButton(
-                  icon: const Icon(Icons.clear, color: Colors.red),
+                  icon: Icon(Icons.clear, color: Colors.grey.shade500),
                   onPressed: () {
                     controller.clear();
                     onClear();
                   },
                 )
               : null,
-          contentPadding:
-              const EdgeInsets.symmetric(vertical: 16.0, horizontal: 20.0),
         ),
-        style: const TextStyle(color: Colors.blueGrey),
+        style: const TextStyle(color: Colors.black87),
       ),
     );
   }

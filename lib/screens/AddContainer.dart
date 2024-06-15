@@ -4,20 +4,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
+import 'package:hometory/cubit/barang_dlm_ruangan/cubit/barang_dlm_ruangan_cubit.dart';
+import 'package:hometory/cubit/container/cubit/containers_cubit.dart';
+import 'package:hometory/cubit/ruangan_cubit.dart';
 import 'package:hometory/endpoints/endpoints.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AddRuangan extends StatefulWidget {
-  const AddRuangan({Key? key}) : super(key: key);
+class AddContainer extends StatefulWidget {
+  const AddContainer({super.key, required this.idInsideRuangan});
+
+  final int idInsideRuangan;
 
   @override
-  _AddRuanganState createState() => _AddRuanganState();
+  _AddContainerState createState() => _AddContainerState();
 }
 
-class _AddRuanganState extends State<AddRuangan> {
-  final _ruanganController = TextEditingController();
+class _AddContainerState extends State<AddContainer> {
+  TextEditingController _containerController = TextEditingController();
+
   String _title = "";
 
   File? galleryFile;
@@ -68,7 +74,7 @@ class _AddRuanganState extends State<AddRuangan> {
 
   @override
   void dispose() {
-    _ruanganController.dispose();
+    _containerController.dispose();
     super.dispose();
   }
 
@@ -81,15 +87,15 @@ class _AddRuanganState extends State<AddRuangan> {
       return; // Handle case where no image is selected
     }
 
-    var request = MultipartRequest('POST', Uri.parse(Endpoints.ruanganCreate));
+    var request =
+        MultipartRequest('POST', Uri.parse(Endpoints.containerCreate));
     debugPrint(idUser.toString());
     debugPrint(galleryFile!.path.toString());
-    debugPrint(_ruanganController.text);
-    request.fields['id_pengguna'] = idUser.toString();
-    request.fields['nama_ruangan'] = _ruanganController.text;
+    request.fields['id_ruangan'] = idUser.toString();
+    request.fields['nama_container'] = _containerController.text;
 
     var multipartFile = await MultipartFile.fromPath(
-      'gambar_ruangan',
+      'gambar_container',
       galleryFile!.path,
     );
     request.files.add(multipartFile);
@@ -98,7 +104,8 @@ class _AddRuanganState extends State<AddRuangan> {
       // Handle response (success or error)
       if (response.statusCode == 201) {
         debugPrint('Data and image posted successfully!');
-        Navigator.pushReplacementNamed(context, '/home-screen');
+        context.read<ContainersCubit>().fetchContainersCubit();
+        Navigator.pop(context);
       } else {
         debugPrint('Error posting data: ${response.statusCode}');
       }
@@ -123,18 +130,18 @@ class _AddRuanganState extends State<AddRuangan> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Tambah Ruangan",
+                  "Tambah Container dalam Ruangan",
                   style: GoogleFonts.poppins(
-                    fontSize: 32,
+                    fontSize: 30,
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  "Isi Form Ruangan untuk menambah ruangan!",
+                  "Isi Form Container untuk menambah container dalam ruangan!",
                   style: GoogleFonts.poppins(
-                    fontSize: 12,
+                    fontSize: 16,
                     color: Colors.black,
                     fontWeight: FontWeight.normal,
                   ),
@@ -212,9 +219,9 @@ class _AddRuanganState extends State<AddRuangan> {
                                   bottom: BorderSide(color: Colors.black)),
                             ),
                             child: TextField(
-                              controller: _ruanganController,
+                              controller: _containerController,
                               decoration: const InputDecoration(
-                                hintText: "Nama Ruangan",
+                                hintText: "Nama Barang dalam Ruangan",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none,
                               ),
@@ -230,18 +237,14 @@ class _AddRuanganState extends State<AddRuangan> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    BlocBuilder<AuthCubit, AuthState>(
-                      builder: (context, state) {
-                        return ElevatedButton(
-                          onPressed: () {
-                            String ruanganName = _ruanganController.text;
-                            if (ruanganName.isNotEmpty) {
-                              _postDataWithImage(context, state.idPengguna!);
-                            }
-                          },
-                          child: const Text('Save'),
-                        );
+                    ElevatedButton(
+                      onPressed: () {
+                        String containerName = _containerController.text;
+                        if (containerName.isNotEmpty) {
+                          _postDataWithImage(context, widget.idInsideRuangan);
+                        }
                       },
+                      child: const Text('Save'),
                     ),
                     const SizedBox(height: 20),
                   ],

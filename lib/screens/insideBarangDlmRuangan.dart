@@ -5,6 +5,9 @@ import 'package:hometory/cubit/container/cubit/containers_cubit.dart';
 import 'package:hometory/cubit/ruangan_cubit.dart';
 import 'package:hometory/dto/barang_dlm_ruangan.dart';
 import 'package:hometory/endpoints/endpoints.dart';
+import 'package:hometory/screens/editBarangRuangan.dart';
+import 'package:hometory/screens/insideRuangan.dart';
+import 'package:hometory/services/data_services.dart';
 
 class InsideBarangDlmRuangan extends StatefulWidget {
   const InsideBarangDlmRuangan({
@@ -46,32 +49,75 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
         backgroundColor: Colors.blueGrey,
         actions: [
           IconButton(
-              onPressed: () {
-                // Implement search functionality here
-              },
-              icon: const Icon(Icons.search)),
-          IconButton(
-              onPressed: () {
-                // Implement edit functionality here
-              },
-              icon: const Icon(Icons.edit)),
+            onPressed: () {
+              DataService.deleteBarangDlmRuangan(idBarangDlmRuangan!);
+              idBarangDlmRuangan = null;
+              context.read<BarangDlmRuanganCubit>().fetchBarangDlmRuanganCubit(
+                  widget.currentPages, "", idBarangDlmRuangan);
+              Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      InsideRuangan(idInsideRuangan: widget.idRuangan),
+                ),
+              );
+            },
+            icon: const Icon(Icons.delete_sharp),
+          ),
+          BlocBuilder<BarangDlmRuanganCubit, BarangDlmRuanganState>(
+            builder: (context, state) {
+              Barang_dlm_ruangan? filterBarangRuangan;
+              String imageUrl = 'assets/images/pfp.jpg'; // Default image
+              if (idBarangDlmRuangan != null) {
+                filterBarangRuangan = state.ListOfBarang_dlm_ruangan.firstWhere(
+                    (element) =>
+                        element.id_barang_dlm_ruangan == idBarangDlmRuangan);
+                imageUrl = Uri.parse(
+                        '${Endpoints.baseUAS}/static/img/${filterBarangRuangan.gambar_barang_dlm_ruangan}')
+                    .toString();
+              }
+              return IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditBarangRuangan(
+                        barangDlmRuangan: filterBarangRuangan!,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.edit),
+              );
+            },
+          ),
         ],
       ),
       body: BlocBuilder<BarangDlmRuanganCubit, BarangDlmRuanganState>(
         builder: (context, state) {
           Barang_dlm_ruangan? filterBarangDlmRuangan;
-          filterBarangDlmRuangan =
-              state.ListOfBarang_dlm_ruangan.firstWhere((element) {
-            debugPrint(
-                'ini id barang dalam ruangan ${element.id_barang_dlm_ruangan.toString()}');
-            return element.id_barang_dlm_ruangan == idBarangDlmRuangan;
-          });
-          String imageUrl = Uri.parse(
-                  '${Endpoints.baseUAS}/static/img/${filterBarangDlmRuangan!.gambar_barang_dlm_ruangan}')
-              .toString();
+          String imageUrl = 'assets/images/pfp.jpg'; // Default image
+          if (idBarangDlmRuangan != null) {
+            filterBarangDlmRuangan = state.ListOfBarang_dlm_ruangan.firstWhere(
+                (element) =>
+                    element.id_barang_dlm_ruangan == idBarangDlmRuangan);
+            imageUrl = Uri.parse(
+                    '${Endpoints.baseUAS}/static/img/${filterBarangDlmRuangan.gambar_barang_dlm_ruangan}')
+                .toString();
+          } else {
+            return const SizedBox(
+              height: 10,
+            );
+          }
 
           return Container(
-            color: Colors.white,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/bg 1.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
             child: SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -112,7 +158,7 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              filterBarangDlmRuangan.nama_barang_dlm_ruangan,
+                              filterBarangDlmRuangan!.nama_barang_dlm_ruangan,
                               style: TextStyle(
                                 fontSize: 24.0,
                                 fontWeight: FontWeight.bold,

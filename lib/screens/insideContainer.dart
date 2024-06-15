@@ -45,14 +45,6 @@ class _InsideContainerState extends State<InsideContainer> {
         actions: [
           IconButton(
               onPressed: () {
-                // showSearch(
-                //   context: context,
-                //   delegate: CustomSearchDelegate(),
-                // );
-              },
-              icon: const Icon(Icons.search)),
-          IconButton(
-              onPressed: () {
                 // Navigator.push(
                 //   context,
                 //   MaterialPageRoute(
@@ -74,70 +66,79 @@ class _InsideContainerState extends State<InsideContainer> {
                     '${Endpoints.baseUAS}/static/img/${filterContianer.gambar_containers}')
                 .toString();
           }
-          return Column(
-            children: [
-              const SizedBox(
-                height: 10,
+          return Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/bg 1.png'),
+                fit: BoxFit.cover,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    margin: EdgeInsets.zero,
-                    child: Image.network(
-                      imageUrl,
-                      height: 200,
-                      width: 350,
-                      fit: BoxFit.contain,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const Icon(Icons.error),
+            ),
+            child: Column(
+              children: [
+                const SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      margin: EdgeInsets.zero,
+                      child: Image.network(
+                        imageUrl,
+                        height: 200,
+                        width: 350,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.error),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(filterContianer!.nama_containers),
-              BlocBuilder<BarangDlmContainerCubit, BarangDlmContainerState>(
-                builder: (context, state) {
-                  List<Barang_dlm_container> filterBarangDlmContainer;
-                  if (idContainer != null) {
-                    filterBarangDlmContainer =
-                        state.ListOfBarang_dlm_container.where((element) =>
-                            element.id_container == idContainer).toList();
-                  } else {
-                    return const SizedBox();
-                  }
-                  return Expanded(
-                    child: ListView.builder(
-                      itemCount: filterBarangDlmContainer.length,
-                      itemBuilder: (context, index) {
-                        var item = filterBarangDlmContainer[index];
-                        final imageBarangDlmContainers = Uri.parse(
-                                '${Endpoints.baseUAS}/static/img/${item.gambar_barang_dlm_container}')
-                            .toString();
-                        return GestureDetector(
-                          onTap: () {
-                            // Navigator.push(context, MaterialPageRoute(
-                            //   builder: (context) {
-                            //     return InsideContainer(
-                            //       idInsideContianer: item.id_containers,
-                            //     );
-                            //   },
-                            // ));
-                          },
-                          child: BarangWidget(
-                            imageUrl: imageBarangDlmContainers,
-                            barangName: item.nama_barang_dlm_container,
-                          ),
-                        );
-                      },
-                    ),
-                  );
-                },
-              ),
-            ],
+                  ],
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Text(filterContianer!.nama_containers),
+                BlocBuilder<BarangDlmContainerCubit, BarangDlmContainerState>(
+                  builder: (context, state) {
+                    List<Barang_dlm_container> filterBarangDlmContainer;
+                    if (idContainer != null) {
+                      filterBarangDlmContainer = state.ListOfBarang_dlm_container
+                          .where((element) =>
+                              element.id_container == idContainer)
+                          .toList();
+                    } else {
+                      return const SizedBox();
+                    }
+                    return Expanded(
+                      child: ListView.builder(
+                        itemCount: filterBarangDlmContainer.length,
+                        itemBuilder: (context, index) {
+                          var item = filterBarangDlmContainer[index];
+                          final imageBarangDlmContainers = Uri.parse(
+                                  '${Endpoints.baseUAS}/static/img/${item.gambar_barang_dlm_container}')
+                              .toString();
+                          return GestureDetector(
+                            onTap: () {
+                              // Navigator.push(context, MaterialPageRoute(
+                              //   builder: (context) {
+                              //     return InsideContainer(
+                              //       idInsideContianer: item.id_containers,
+                              //     );
+                              //   },
+                              // ));
+                            },
+                            child: BarangWidget(
+                              imageUrl: imageBarangDlmContainers,
+                              barangName: item.nama_barang_dlm_container,
+                            ),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           );
         },
       ),

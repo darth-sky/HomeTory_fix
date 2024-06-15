@@ -1,29 +1,40 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
+import 'package:hometory/dto/ruangan.dart';
 import 'package:hometory/endpoints/endpoints.dart';
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AddRuangan extends StatefulWidget {
-  const AddRuangan({Key? key}) : super(key: key);
+class EditRuangan extends StatefulWidget {
+  final Ruangan ruangan;
+
+  const EditRuangan({required this.ruangan, Key? key}) : super(key: key);
 
   @override
-  _AddRuanganState createState() => _AddRuanganState();
+  _EditRuanganState createState() => _EditRuanganState();
 }
 
-class _AddRuanganState extends State<AddRuangan> {
-  final _ruanganController = TextEditingController();
-  String _title = "";
+class _EditRuanganState extends State<EditRuangan> {
+  late TextEditingController _titleController;
 
   File? galleryFile;
   final picker = ImagePicker();
 
-  _showPicker({required BuildContext context}) {
+  @override
+  void initState() {
+    super.initState();
+    _titleController = TextEditingController(text: widget.ruangan.nama_ruangan);
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _showPicker({required BuildContext context}) async {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -53,7 +64,7 @@ class _AddRuanganState extends State<AddRuangan> {
     );
   }
 
-  Future getImage(ImageSource img) async {
+  Future<void> getImage(ImageSource img) async {
     final pickedFile = await picker.pickImage(source: img);
     setState(() {
       if (pickedFile != null) {
@@ -66,43 +77,42 @@ class _AddRuanganState extends State<AddRuangan> {
     });
   }
 
-  @override
-  void dispose() {
-    _ruanganController.dispose();
-    super.dispose();
-  }
+  Future<void> _updateDataWithImage(BuildContext context) async {
+    try {
+      var request = http.MultipartRequest('POST',
+          Uri.parse('${Endpoints.ruanganUpdate}/${widget.ruangan.id_ruangan}'));
+      request.fields['id_ruangan'] = widget.ruangan.id_ruangan.toString();
+      request.fields['nama_ruangan'] = _titleController.text;
 
-  saveData() {
-    debugPrint(_title);
-  }
+      if (galleryFile != null) {
+        var multipartFile = await http.MultipartFile.fromPath(
+            'gambar_ruangan', galleryFile!.path);
+        request.files.add(multipartFile);
+      }
 
-  Future<void> _postDataWithImage(BuildContext context, int idUser) async {
-    if (galleryFile == null) {
-      return; // Handle case where no image is selected
-    }
+      // Debug prints to verify request details
+      debugPrint('Request URL: ${request.url}');
+      debugPrint('Request Fields: ${request.fields}');
+      debugPrint('Request Files: ${request.files}');
 
-    var request = MultipartRequest('POST', Uri.parse(Endpoints.ruanganCreate));
-    debugPrint(idUser.toString());
-    debugPrint(galleryFile!.path.toString());
-    debugPrint(_ruanganController.text);
-    request.fields['id_pengguna'] = idUser.toString();
-    request.fields['nama_ruangan'] = _ruanganController.text;
-
-    var multipartFile = await MultipartFile.fromPath(
-      'gambar_ruangan',
-      galleryFile!.path,
-    );
-    request.files.add(multipartFile);
-
-    request.send().then((response) {
-      // Handle response (success or error)
-      if (response.statusCode == 201) {
-        debugPrint('Data and image posted successfully!');
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        debugPrint('Menu updated successfully!');
         Navigator.pushReplacementNamed(context, '/home-screen');
       } else {
-        debugPrint('Error posting data: ${response.statusCode}');
+        debugPrint('Error updating menu: ${response.statusCode}');
+        var responseBody = await response.stream.bytesToString();
+        debugPrint('Response body: $responseBody');
       }
-    });
+    } catch (e) {
+      if (e is http.ClientException) {
+        debugPrint('ClientException: ${e.message}');
+      } else if (e is SocketException) {
+        debugPrint('SocketException: ${e.message}');
+      } else {
+        debugPrint('Exception: ${e.toString()}');
+      }
+    }
   }
 
   @override
@@ -123,7 +133,7 @@ class _AddRuanganState extends State<AddRuangan> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Tambah Ruangan",
+                  "Edit Menu",
                   style: GoogleFonts.poppins(
                     fontSize: 32,
                     color: Colors.white,
@@ -132,7 +142,7 @@ class _AddRuanganState extends State<AddRuangan> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  "Isi Form Ruangan untuk menambah ruangan!",
+                  "Isi Form Ruangan untuk mengedit ruangan!",
                   style: GoogleFonts.poppins(
                     fontSize: 12,
                     color: Colors.black,
@@ -178,31 +188,33 @@ class _AddRuanganState extends State<AddRuangan> {
                               width: double.infinity,
                               height: 150,
                               child: galleryFile == null
-                                  ? Center(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          const Icon(
-                                            Icons.add_photo_alternate_outlined,
-                                            color: Colors.grey,
-                                            size: 50,
+                                  ? (widget.ruangan.gambar_ruangan.isNotEmpty
+                                      ? Image.network(
+                                          "${Endpoints.baseUAS}/static/img/${widget.ruangan.gambar_ruangan}")
+                                      : Center(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              const Icon(
+                                                Icons
+                                                    .add_photo_alternate_outlined,
+                                                color: Colors.grey,
+                                                size: 50,
+                                              ),
+                                              Text(
+                                                'Pick your Image here',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 14,
+                                                  color: const Color.fromARGB(
+                                                      255, 124, 122, 122),
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          Text(
-                                            'Pick your Image here',
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 14,
-                                              color: const Color.fromARGB(
-                                                  255, 124, 122, 122),
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : Center(
-                                      child: Image.file(galleryFile!),
-                                    ),
+                                        ))
+                                  : Center(child: Image.file(galleryFile!)),
                             ),
                           ),
                           Container(
@@ -212,38 +224,27 @@ class _AddRuanganState extends State<AddRuangan> {
                                   bottom: BorderSide(color: Colors.black)),
                             ),
                             child: TextField(
-                              controller: _ruanganController,
+                              controller: _titleController,
                               decoration: const InputDecoration(
-                                hintText: "Nama Ruangan",
+                                hintText: "Title",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none,
                               ),
-                              onChanged: (value) {
-                                setState(() {
-                                  _title = value;
-                                });
-                              },
                             ),
                           ),
-                          const SizedBox(height: 10),
                         ],
                       ),
                     ),
                     const SizedBox(height: 20),
-                    BlocBuilder<AuthCubit, AuthState>(
-                      builder: (context, state) {
-                        return ElevatedButton(
-                          onPressed: () {
-                            String ruanganName = _ruanganController.text;
-                            if (ruanganName.isNotEmpty) {
-                              _postDataWithImage(context, state.idPengguna!);
-                            }
-                          },
-                          child: const Text('Save'),
-                        );
+                    ElevatedButton(
+                      onPressed: () {
+                        String ruanganName = _titleController.text;
+                        if (ruanganName.isNotEmpty) {
+                          _updateDataWithImage(context);
+                        }
                       },
+                      child: const Text('Save'),
                     ),
-                    const SizedBox(height: 20),
                   ],
                 ),
               ),

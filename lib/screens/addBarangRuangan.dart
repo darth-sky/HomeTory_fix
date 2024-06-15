@@ -4,21 +4,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
+import 'package:hometory/cubit/barang_dlm_ruangan/cubit/barang_dlm_ruangan_cubit.dart';
+import 'package:hometory/cubit/ruangan_cubit.dart';
 import 'package:hometory/endpoints/endpoints.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AddRuangan extends StatefulWidget {
-  const AddRuangan({Key? key}) : super(key: key);
+class AddBarangRuangan extends StatefulWidget {
+  const AddBarangRuangan({super.key, required this.idInsideRuangan});
+
+  final int idInsideRuangan;
 
   @override
-  _AddRuanganState createState() => _AddRuanganState();
+  _AddBarangRuanganState createState() => _AddBarangRuanganState();
 }
 
-class _AddRuanganState extends State<AddRuangan> {
-  final _ruanganController = TextEditingController();
+class _AddBarangRuanganState extends State<AddBarangRuangan> {
+  TextEditingController _BarangController = TextEditingController();
+  TextEditingController _itemQtyController = TextEditingController();
+  TextEditingController _descItemController = TextEditingController();
   String _title = "";
+
+  String _selectedCategory = 'lain-lain';
 
   File? galleryFile;
   final picker = ImagePicker();
@@ -68,7 +76,9 @@ class _AddRuanganState extends State<AddRuangan> {
 
   @override
   void dispose() {
-    _ruanganController.dispose();
+    _BarangController.dispose();
+    _descItemController.dispose();
+    _itemQtyController.dispose();
     super.dispose();
   }
 
@@ -81,15 +91,18 @@ class _AddRuanganState extends State<AddRuangan> {
       return; // Handle case where no image is selected
     }
 
-    var request = MultipartRequest('POST', Uri.parse(Endpoints.ruanganCreate));
+    var request = MultipartRequest('POST', Uri.parse(Endpoints.barangDlmRuanganCreate));
     debugPrint(idUser.toString());
     debugPrint(galleryFile!.path.toString());
-    debugPrint(_ruanganController.text);
-    request.fields['id_pengguna'] = idUser.toString();
-    request.fields['nama_ruangan'] = _ruanganController.text;
+    request.fields['id_ruangan'] = idUser.toString();
+    request.fields['nama_barang_dlm_ruangan'] = _BarangController.text;
+    request.fields['desc_barang_dlm_ruangan'] = _descItemController.text;
+    request.fields['qnty_barang_dlm_ruangan'] = _itemQtyController.text;
+    request.fields['category_barang_dlm_ruangan'] =
+        _selectedCategory; // Add selected category
 
     var multipartFile = await MultipartFile.fromPath(
-      'gambar_ruangan',
+      'gambar_barang_dlm_ruangan',
       galleryFile!.path,
     );
     request.files.add(multipartFile);
@@ -98,7 +111,11 @@ class _AddRuanganState extends State<AddRuangan> {
       // Handle response (success or error)
       if (response.statusCode == 201) {
         debugPrint('Data and image posted successfully!');
-        Navigator.pushReplacementNamed(context, '/home-screen');
+        context
+            .read<BarangDlmRuanganCubit>()
+            .fetchBarangDlmRuanganCubit(1, "", widget.idInsideRuangan);
+        Navigator.pop(context);
+        // Navigator.pushReplacementNamed(context, '/home-screen');
       } else {
         debugPrint('Error posting data: ${response.statusCode}');
       }
@@ -123,18 +140,18 @@ class _AddRuanganState extends State<AddRuangan> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Tambah Ruangan",
+                  "Tambah Barang dalam Ruangan",
                   style: GoogleFonts.poppins(
-                    fontSize: 32,
+                    fontSize: 20,
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  "Isi Form Ruangan untuk menambah ruangan!",
+                  "Isi Form Ruangan untuk menambah barang dalam ruangan!",
                   style: GoogleFonts.poppins(
-                    fontSize: 12,
+                    fontSize: 10,
                     color: Colors.black,
                     fontWeight: FontWeight.normal,
                   ),
@@ -212,9 +229,9 @@ class _AddRuanganState extends State<AddRuangan> {
                                   bottom: BorderSide(color: Colors.black)),
                             ),
                             child: TextField(
-                              controller: _ruanganController,
+                              controller: _BarangController,
                               decoration: const InputDecoration(
-                                hintText: "Nama Ruangan",
+                                hintText: "Nama Barang dalam Ruangan",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none,
                               ),
@@ -225,23 +242,85 @@ class _AddRuanganState extends State<AddRuangan> {
                               },
                             ),
                           ),
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(color: Colors.black)),
+                            ),
+                            child: TextField(
+                              controller: _descItemController,
+                              decoration: const InputDecoration(
+                                hintText: "Deskripsi Barang dalam Ruangan",
+                                hintStyle: TextStyle(color: Colors.grey),
+                                border: InputBorder.none,
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  _title = value;
+                                });
+                              },
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: const BoxDecoration(
+                              border: Border(
+                                  bottom: BorderSide(color: Colors.black)),
+                            ),
+                            child: TextField(
+                              controller: _itemQtyController,
+                              decoration: const InputDecoration(
+                                hintText: "Quantity Barang dalam Ruangan",
+                                hintStyle: TextStyle(color: Colors.grey),
+                                border: InputBorder.none,
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  _title = value;
+                                });
+                              },
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 10,
+                          ),
+                          DropdownButtonFormField<String>(
+                            value: _selectedCategory,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _selectedCategory = newValue!;
+                              });
+                            },
+                            items: <String>[
+                              'lain-lain',
+                              'elektronik',
+                              'perabotan rumah tangga',
+                              'perabotan kamar mandi'
+                            ].map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            decoration: const InputDecoration(
+                              labelText: 'Category',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
                           const SizedBox(height: 10),
                         ],
                       ),
                     ),
                     const SizedBox(height: 20),
-                    BlocBuilder<AuthCubit, AuthState>(
-                      builder: (context, state) {
-                        return ElevatedButton(
-                          onPressed: () {
-                            String ruanganName = _ruanganController.text;
-                            if (ruanganName.isNotEmpty) {
-                              _postDataWithImage(context, state.idPengguna!);
-                            }
-                          },
-                          child: const Text('Save'),
-                        );
+                    ElevatedButton(
+                      onPressed: () {
+                        String barangRuanganName = _BarangController.text;
+                        if (barangRuanganName.isNotEmpty) {
+                          _postDataWithImage(context, widget.idInsideRuangan);
+                        }
                       },
+                      child: const Text('Save'),
                     ),
                     const SizedBox(height: 20),
                   ],

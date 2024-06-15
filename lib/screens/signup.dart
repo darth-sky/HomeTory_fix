@@ -6,24 +6,27 @@ import 'package:hometory/components/constants.dart';
 import 'package:hometory/components/my_TextField.dart';
 import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
 import 'package:hometory/dto/login.dart';
-import 'package:hometory/screens/signup.dart';
+import 'package:hometory/screens/loginPage.dart';
 import 'package:hometory/services/data_services.dart';
 import 'package:hometory/utils/secure_storage_util.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({Key? key}) : super(key: key);
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _SignUpScreenState createState() => _SignUpScreenState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignUpScreenState extends State<SignUpScreen> {
+  final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   void sendLogin(context, AuthCubit authCubit) async {
+    final name = _nameController.text;
     final email = _emailController.text;
     final password = _passwordController.text;
+    debugPrint(name);
     debugPrint(email);
     debugPrint(password);
     final response = await DataService.sendLoginData(email, password);
@@ -90,10 +93,19 @@ class _LoginPageState extends State<LoginPage> {
                     height: 10,
                   ),
                   MyTextfield(
-                    controller: _emailController,
-                    hintText: 'Username / Account',
+                    controller: _nameController,
+                    hintText: 'Username',
                     obscureText: false,
                     prefixIcon: Icons.person,
+                  ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  MyTextfield(
+                    controller: _emailController,
+                    hintText: 'Email',
+                    obscureText: false,
+                    prefixIcon: Icons.email,
                   ),
                   const SizedBox(
                     height: 10,
@@ -107,18 +119,18 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          'Lupa Password?',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // const Padding(
+                  //   padding: EdgeInsets.symmetric(horizontal: 25.0),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.end,
+                  //     children: [
+                  //       Text(
+                  //         'Lupa Password?',
+                  //         style: TextStyle(color: Colors.black),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   const SizedBox(
                     height: 25,
                   ),
@@ -126,7 +138,7 @@ class _LoginPageState extends State<LoginPage> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        sendLogin(context, authCubit);
+                        // sendLogin(context, authCubit);
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
@@ -135,7 +147,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       child: Text(
-                        'Login',
+                        'Sign up',
                         style: GoogleFonts.poppins(
                           color: Colors.black,
                           fontSize: 18,
@@ -163,11 +175,11 @@ class _LoginPageState extends State<LoginPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => SignUpScreen()),
+                                    builder: (context) => LoginPage()),
                               );
                             },
                             child: const Text(
-                              'Tidak Punya Akun? SIGN UP',
+                              'Sudah Punya Akun? LOG IN',
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.blue),

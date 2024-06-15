@@ -9,6 +9,7 @@ class Endpoints {
   static const String ruanganRead = "$baseUAS/api/v1/ruangan/read";
   static const String ruanganCreate = "$baseUAS/api/v1/ruangan/create";
   static const String ruanganDelete = "$baseUAS/api/v1/ruangan/delete";
+  static const String ruanganUpdate = "$baseUAS/api/v1/ruangan/update";
 
   // Containers
   static const String containerRead = "$baseUAS/api/v1/container/read";
@@ -24,6 +25,7 @@ class Endpoints {
       "$baseUAS/api/v1/barang_dlm_ruangan/create";
   static const String barangDlmRuanganDelete =
       "$baseUAS/api/v1/barang_dlm_ruangan/delete";
+  static const String barangDlmRuanganUpdate = "$baseUAS/api/v1/barang_dlm_ruangan/update";
 
   // barang dalam container
   static const String barangDlmContainerRead =
