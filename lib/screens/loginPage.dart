@@ -42,7 +42,6 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void signUserUp() {}
 
   @override
   Widget build(BuildContext context) {
@@ -163,7 +162,7 @@ class _LoginPageState extends State<LoginPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => SignUpScreen()),
+                                    builder: (context) => const SignUpScreen()),
                               );
                             },
                             child: const Text(

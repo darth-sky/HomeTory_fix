@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hometory/components/barangWidget.dart';
 import 'package:hometory/components/containersWidget.dart';
 import 'package:hometory/components/customsearch.dart';
+import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
 import 'package:hometory/cubit/barang_dlm_container/cubit/barang_dlm_container_cubit.dart';
 import 'package:hometory/cubit/barang_dlm_ruangan/cubit/barang_dlm_ruangan_cubit.dart';
 import 'package:hometory/cubit/container/cubit/containers_cubit.dart';
@@ -29,15 +30,15 @@ class _BarangScreenState extends State<BarangScreen> {
     _searchController = TextEditingController();
     _fetchData();
     context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit();
-    context
-        .read<BarangDlmRuanganCubit>()
-        .fetchBarangDlmRuanganCubit(currentPage, _searchController.text, null);
+    final idPengguna = context.read<AuthCubit>().state.idPengguna;
+    context.read<BarangDlmRuanganCubit>().fetchBarangDlmRuanganCubit(
+        currentPage, _searchController.text, null, idPengguna!);
   }
 
   void _fetchData() {
-    context
-        .read<BarangDlmRuanganCubit>()
-        .fetchBarangDlmRuanganCubit(currentPage, _searchController.text, null);
+    final idPengguna = context.read<AuthCubit>().state.idPengguna;
+    context.read<BarangDlmRuanganCubit>().fetchBarangDlmRuanganCubit(
+        currentPage, _searchController.text, null, idPengguna!);
   }
 
   void _incrementPage() {
@@ -102,6 +103,7 @@ class _BarangScreenState extends State<BarangScreen> {
                                     builder: (context) {
                                       return InsideContainer(
                                         idInsideContianer: item.id_container,
+                                        idRuangan: item.id_container,
                                       );
                                     },
                                   ));
@@ -127,7 +129,7 @@ class _BarangScreenState extends State<BarangScreen> {
                                 BarangDlmRuanganState>(
                               builder: (context, state) {
                                 List<Barang_dlm_ruangan> barangDlmRuangan =
-                                    state.ListOfBarang_dlm_ruangan;
+                                    state.listOfBarang_dlm_ruangan_byUser;
                                 return ListView.builder(
                                   itemCount: barangDlmRuangan.length,
                                   itemBuilder: (context, index) {
@@ -135,7 +137,6 @@ class _BarangScreenState extends State<BarangScreen> {
                                     final imageBarangDlmRuangan = Uri.parse(
                                             '${Endpoints.baseUAS}/static/img/${item.gambar_barang_dlm_ruangan}')
                                         .toString();
-
                                     debugPrint(
                                         'ID ruangan : ${item.id_ruangan.toString()}');
                                     return GestureDetector(

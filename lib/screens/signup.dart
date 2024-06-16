@@ -22,14 +22,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void sendLogin(context, AuthCubit authCubit) async {
-    final name = _nameController.text;
+  void sendSignUp(context, AuthCubit authCubit) async {
     final email = _emailController.text;
     final password = _passwordController.text;
-    debugPrint(name);
     debugPrint(email);
     debugPrint(password);
-    final response = await DataService.sendLoginData(email, password);
+    final response = await DataService.sendSignUpData(email, password);
     debugPrint(response.statusCode.toString());
     if (response.statusCode == 200) {
       debugPrint("sending success");
@@ -38,7 +36,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       await SecureStorageUtil.storage
           .write(key: tokenStoreName, value: loggedIn.accessToken);
       authCubit.login(loggedIn.accessToken, loggedIn.idUser);
-      Navigator.pushReplacementNamed(context, "/home-screen");
+      Navigator.pushReplacement(context, MaterialPageRoute(
+        builder: (context) {
+          return LoginPage();
+        },
+      ));
       debugPrint(loggedIn.accessToken);
     } else {
       debugPrint("failed not");

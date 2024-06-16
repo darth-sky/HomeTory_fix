@@ -1,80 +1,82 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hometory/cubit/barang_dlm_container/cubit/barang_dlm_container_cubit.dart';
 import 'package:hometory/cubit/barang_dlm_ruangan/cubit/barang_dlm_ruangan_cubit.dart';
 import 'package:hometory/cubit/container/cubit/containers_cubit.dart';
 import 'package:hometory/cubit/ruangan_cubit.dart';
+import 'package:hometory/dto/barang_dlm_container.dart';
 import 'package:hometory/dto/barang_dlm_ruangan.dart';
 import 'package:hometory/endpoints/endpoints.dart';
+import 'package:hometory/screens/EditBarangContainer.dart';
 import 'package:hometory/screens/editBarangRuangan.dart';
+import 'package:hometory/screens/insideContainer.dart';
 import 'package:hometory/screens/insideRuangan.dart';
 import 'package:hometory/services/data_services.dart';
 
-class InsideBarangDlmRuangan extends StatefulWidget {
-  const InsideBarangDlmRuangan({
+class InsideBarangDlmContainer extends StatefulWidget {
+  const InsideBarangDlmContainer({
     super.key,
-    required this.idInsideBarangDlmRuangan,
-    required this.idRuangan,
+    required this.idInsideBarangDlmContainer,
+    required this.idContainer,
     required this.currentPages,
   });
 
-  final int idInsideBarangDlmRuangan;
-  final int idRuangan;
+  final int idInsideBarangDlmContainer;
+  final int idContainer;
   final int currentPages;
 
   @override
-  _InsideBarangDlmRuanganState createState() => _InsideBarangDlmRuanganState();
+  _InsideBarangDlmContainerState createState() =>
+      _InsideBarangDlmContainerState();
 }
 
-class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
+class _InsideBarangDlmContainerState extends State<InsideBarangDlmContainer> {
   @override
   void initState() {
     super.initState();
     debugPrint('dibawah print');
-    debugPrint(widget.idInsideBarangDlmRuangan.toString());
-    debugPrint(widget.idRuangan.toString());
+    debugPrint(widget.idInsideBarangDlmContainer.toString());
+    debugPrint(widget.idContainer.toString());
     debugPrint('ini currentpages ${widget.currentPages.toString()}');
     context.read<RuanganCubit>().fetchRuanganCubit();
     context.read<ContainersCubit>().fetchContainersCubit();
+    context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit();
+  }
+
+  void _deleteBarang(int idBarangDlmContainer) async {
+    await DataService.deleteBarangDlmContainer(idBarangDlmContainer!);
     context
-        .read<BarangDlmRuanganCubit>()
-        .fetchBarangDlmRuanganCubit(widget.currentPages, '', widget.idRuangan, 1);
+                  .read<BarangDlmContainerCubit>()
+                  .fetchBarangDlmContainerCubit();
   }
 
   @override
   Widget build(BuildContext context) {
-    int? idBarangDlmRuangan = widget.idInsideBarangDlmRuangan;
+    int? idBarangDlmContainer = widget.idInsideBarangDlmContainer;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detail Barang'),
+        title: const Text('Detail Barang dalam Container'),
         backgroundColor: Colors.blueGrey,
         actions: [
           IconButton(
             onPressed: () {
-              DataService.deleteBarangDlmRuangan(idBarangDlmRuangan!);
-              idBarangDlmRuangan = null;
-              context.read<BarangDlmRuanganCubit>().fetchBarangDlmRuanganCubit(
-                  widget.currentPages, "", idBarangDlmRuangan, 1);
+              _deleteBarang(idBarangDlmContainer!);
               Navigator.pop(context);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      InsideRuangan(idInsideRuangan: widget.idRuangan),
-                ),
-              );
+              idBarangDlmContainer = null;
             },
             icon: const Icon(Icons.delete_sharp),
           ),
-          BlocBuilder<BarangDlmRuanganCubit, BarangDlmRuanganState>(
+          BlocBuilder<BarangDlmContainerCubit, BarangDlmContainerState>(
             builder: (context, state) {
-              Barang_dlm_ruangan? filterBarangRuangan;
+              Barang_dlm_container? filterBarangContainer;
               String imageUrl = 'assets/images/pfp.jpg'; // Default image
-              if (idBarangDlmRuangan != null) {
-                filterBarangRuangan = state.ListOfBarang_dlm_ruangan.firstWhere(
-                    (element) =>
-                        element.id_barang_dlm_ruangan == idBarangDlmRuangan);
+              if (idBarangDlmContainer != null) {
+                filterBarangContainer =
+                    state.ListOfBarang_dlm_container.firstWhere((element) =>
+                        element.id_barang_dlm_container ==
+                        idBarangDlmContainer);
                 imageUrl = Uri.parse(
-                        '${Endpoints.baseUAS}/static/img/${filterBarangRuangan.gambar_barang_dlm_ruangan}')
+                        '${Endpoints.baseUAS}/static/img/${filterBarangContainer.gambar_barang_dlm_container}')
                     .toString();
               }
               return IconButton(
@@ -82,8 +84,8 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => EditBarangRuangan(
-                        barangDlmRuangan: filterBarangRuangan!,
+                      builder: (context) => EditBarangContainer(
+                        barangDlmContainer: filterBarangContainer!,
                       ),
                     ),
                   );
@@ -94,16 +96,16 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
           ),
         ],
       ),
-      body: BlocBuilder<BarangDlmRuanganCubit, BarangDlmRuanganState>(
+      body: BlocBuilder<BarangDlmContainerCubit, BarangDlmContainerState>(
         builder: (context, state) {
-          Barang_dlm_ruangan? filterBarangDlmRuangan;
+          Barang_dlm_container? filterBarangDlmContainer;
           String imageUrl = 'assets/images/pfp.jpg'; // Default image
-          if (idBarangDlmRuangan != null) {
-            filterBarangDlmRuangan = state.ListOfBarang_dlm_ruangan.firstWhere(
-                (element) =>
-                    element.id_barang_dlm_ruangan == idBarangDlmRuangan);
+          if (idBarangDlmContainer != null) {
+            filterBarangDlmContainer =
+                state.ListOfBarang_dlm_container.firstWhere((element) =>
+                    element.id_barang_dlm_container == idBarangDlmContainer);
             imageUrl = Uri.parse(
-                    '${Endpoints.baseUAS}/static/img/${filterBarangDlmRuangan.gambar_barang_dlm_ruangan}')
+                    '${Endpoints.baseUAS}/static/img/${filterBarangDlmContainer.gambar_barang_dlm_container}')
                 .toString();
           } else {
             return const SizedBox(
@@ -158,7 +160,8 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              filterBarangDlmRuangan!.nama_barang_dlm_ruangan,
+                              filterBarangDlmContainer!
+                                  .nama_barang_dlm_container,
                               style: TextStyle(
                                 fontSize: 24.0,
                                 fontWeight: FontWeight.bold,
@@ -167,8 +170,8 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
                             ),
                             const SizedBox(height: 8.0),
                             Text(
-                              filterBarangDlmRuangan
-                                  .category_barang_dlm_ruangan,
+                              filterBarangDlmContainer
+                                  .category_barang_dlm_container,
                               style: TextStyle(
                                 fontSize: 18.0,
                                 color: Colors.blueGrey.shade600,
@@ -189,7 +192,8 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
                             ),
                             const SizedBox(height: 8.0),
                             Text(
-                              filterBarangDlmRuangan.desc_barang_dlm_ruangan,
+                              filterBarangDlmContainer
+                                  .desc_barang_dlm_container,
                               style: TextStyle(
                                 fontSize: 16.0,
                                 color: Colors.blueGrey.shade600,
@@ -211,7 +215,7 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
                             ),
                             const SizedBox(height: 8.0),
                             Text(
-                              filterBarangDlmRuangan.qnty_barang_dlm_ruangan
+                              filterBarangDlmContainer.qnty_barang_dlm_container
                                   .toString(),
                               style: TextStyle(
                                 fontSize: 16.0,

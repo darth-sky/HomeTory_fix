@@ -106,7 +106,7 @@ class _TambahItemScreenState extends State<TambahItemScreen> {
         // context.read<BarangDlmRuanganCubit>().fetchBarangDlmRuanganCubit();
         context
             .read<BarangDlmRuanganCubit>()
-            .fetchBarangDlmRuanganCubit(1, "", widget.idInsideRuangan);
+            .fetchBarangDlmRuanganCubit(1, "", widget.idInsideRuangan, 1);
         Navigator.pop(context);
         // Navigator.pushReplacementNamed(context, '/inside-ruangan');
         // Navigator.pushReplacement(context,

@@ -116,6 +116,27 @@ class DataService {
     }
   }
 
+  static Future<List<Barang_dlm_ruangan>> fetchBarangDlmRuanganByUser(
+    int page,
+    String search,
+    int id_pengguna,
+  ) async {
+    String endpoint;
+    endpoint = '${Endpoints.barangDlmRuanganByUser}/$id_pengguna';
+
+    final uri = Uri.parse(endpoint).replace(queryParameters: {
+      'search': search,
+      'page': page.toString(),
+    });
+    final response = await http.get(uri);
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body)['datas'];
+      return data.map((item) => Barang_dlm_ruangan.fromJson(item)).toList();
+    } else {
+      throw Exception('Failed to load data');
+    }
+  }
+
   static Future<void> deleteRuangan(int id) async {
     await http.delete(Uri.parse('${Endpoints.ruanganDelete}/$id'),
         headers: {'Content-type': 'application/json'});
@@ -131,12 +152,31 @@ class DataService {
         headers: {'Content-type': 'application/json'});
   }
 
+  static Future<void> deleteBarangDlmContainer(int id) async {
+    await http.delete(Uri.parse('${Endpoints.barangDlmContainerDelete}/$id'),
+        headers: {'Content-type': 'application/json'});
+  }
+
   //post login with email and password
   static Future<http.Response> sendLoginData(
       String email, String password) async {
     final url = Uri.parse(Endpoints.login);
     debugPrint("$email test");
     debugPrint("$password test");
+
+    final data = {'username': email, 'kata_sandi': password};
+
+    final response = await http.post(
+      url,
+      headers: {'Content-type': 'application/json'},
+      body: jsonEncode(data),
+    );
+    return response;
+  }
+
+  static Future<http.Response> sendSignUpData(
+      String email, String password) async {
+    final url = Uri.parse(Endpoints.SignUp);
 
     final data = {'username': email, 'kata_sandi': password};
 

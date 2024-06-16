@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
+import 'package:hometory/cubit/barang_dlm_container/cubit/barang_dlm_container_cubit.dart';
 import 'package:hometory/cubit/barang_dlm_ruangan/cubit/barang_dlm_ruangan_cubit.dart';
 import 'package:hometory/cubit/ruangan_cubit.dart';
 import 'package:hometory/endpoints/endpoints.dart';
@@ -11,16 +12,16 @@ import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AddBarangRuangan extends StatefulWidget {
-  const AddBarangRuangan({super.key, required this.idInsideRuangan});
+class AddBarangContainer extends StatefulWidget {
+  const AddBarangContainer({super.key, required this.idInsideContainer});
 
-  final int idInsideRuangan;
+  final int idInsideContainer;
 
   @override
-  _AddBarangRuanganState createState() => _AddBarangRuanganState();
+  _AddBarangContainerState createState() => _AddBarangContainerState();
 }
 
-class _AddBarangRuanganState extends State<AddBarangRuangan> {
+class _AddBarangContainerState extends State<AddBarangContainer> {
   TextEditingController _BarangController = TextEditingController();
   TextEditingController _itemQtyController = TextEditingController();
   TextEditingController _descItemController = TextEditingController();
@@ -91,18 +92,19 @@ class _AddBarangRuanganState extends State<AddBarangRuangan> {
       return; // Handle case where no image is selected
     }
 
-    var request = MultipartRequest('POST', Uri.parse(Endpoints.barangDlmRuanganCreate));
+    var request =
+        MultipartRequest('POST', Uri.parse(Endpoints.barangDlmContainerCreate));
     debugPrint(idUser.toString());
     debugPrint(galleryFile!.path.toString());
-    request.fields['id_ruangan'] = idUser.toString();
-    request.fields['nama_barang_dlm_ruangan'] = _BarangController.text;
-    request.fields['desc_barang_dlm_ruangan'] = _descItemController.text;
-    request.fields['qnty_barang_dlm_ruangan'] = _itemQtyController.text;
-    request.fields['category_barang_dlm_ruangan'] =
+    request.fields['id_container'] = idUser.toString();
+    request.fields['nama_barang_dlm_container'] = _BarangController.text;
+    request.fields['desc_barang_dlm_container'] = _descItemController.text;
+    request.fields['qnty_barang_dlm_container'] = _itemQtyController.text;
+    request.fields['category_barang_dlm_container'] =
         _selectedCategory; // Add selected category
 
     var multipartFile = await MultipartFile.fromPath(
-      'gambar_barang_dlm_ruangan',
+      'gambar_barang_dlm_container',
       galleryFile!.path,
     );
     request.files.add(multipartFile);
@@ -111,9 +113,7 @@ class _AddBarangRuanganState extends State<AddBarangRuangan> {
       // Handle response (success or error)
       if (response.statusCode == 201) {
         debugPrint('Data and image posted successfully!');
-        context
-            .read<BarangDlmRuanganCubit>()
-            .fetchBarangDlmRuanganCubit(1, "", widget.idInsideRuangan, 1);
+        context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit();
         Navigator.pop(context);
         // Navigator.pushReplacementNamed(context, '/home-screen');
       } else {
@@ -140,7 +140,7 @@ class _AddBarangRuanganState extends State<AddBarangRuangan> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Tambah Barang dalam Ruangan",
+                  "Tambah Barang dalam container",
                   style: GoogleFonts.poppins(
                     fontSize: 20,
                     color: Colors.white,
@@ -149,7 +149,7 @@ class _AddBarangRuanganState extends State<AddBarangRuangan> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  "Isi Form Ruangan untuk menambah barang dalam ruangan!",
+                  "Isi Form container untuk menambah barang dalam container!",
                   style: GoogleFonts.poppins(
                     fontSize: 10,
                     color: Colors.black,
@@ -231,7 +231,7 @@ class _AddBarangRuanganState extends State<AddBarangRuangan> {
                             child: TextField(
                               controller: _BarangController,
                               decoration: const InputDecoration(
-                                hintText: "Nama Barang dalam Ruangan",
+                                hintText: "Nama Barang dalam Container",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none,
                               ),
@@ -251,7 +251,7 @@ class _AddBarangRuanganState extends State<AddBarangRuangan> {
                             child: TextField(
                               controller: _descItemController,
                               decoration: const InputDecoration(
-                                hintText: "Deskripsi Barang dalam Ruangan",
+                                hintText: "Deskripsi Barang dalam container",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none,
                               ),
@@ -271,7 +271,7 @@ class _AddBarangRuanganState extends State<AddBarangRuangan> {
                             child: TextField(
                               controller: _itemQtyController,
                               decoration: const InputDecoration(
-                                hintText: "Quantity Barang dalam Ruangan",
+                                hintText: "Quantity Barang dalam container",
                                 hintStyle: TextStyle(color: Colors.grey),
                                 border: InputBorder.none,
                               ),
@@ -315,9 +315,9 @@ class _AddBarangRuanganState extends State<AddBarangRuangan> {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        String barangRuanganName = _BarangController.text;
-                        if (barangRuanganName.isNotEmpty) {
-                          _postDataWithImage(context, widget.idInsideRuangan);
+                        String barangContainerName = _BarangController.text;
+                        if (barangContainerName.isNotEmpty) {
+                          _postDataWithImage(context, widget.idInsideContainer);
                         }
                       },
                       child: const Text('Save'),

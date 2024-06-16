@@ -6,21 +6,30 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
 import 'package:hometory/cubit/barang_dlm_ruangan/cubit/barang_dlm_ruangan_cubit.dart';
 import 'package:hometory/cubit/ruangan_cubit.dart';
+import 'package:hometory/dto/barang_dlm_container.dart';
+import 'package:hometory/dto/barang_dlm_ruangan.dart';
 import 'package:hometory/endpoints/endpoints.dart';
+import 'package:hometory/screens/insideBarangContainer.dart';
+import 'package:hometory/screens/insideBarangDlmRuangan.dart';
+import 'package:hometory/screens/insideContainer.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:image_picker/image_picker.dart';
 
-class AddBarangRuangan extends StatefulWidget {
-  const AddBarangRuangan({super.key, required this.idInsideRuangan});
-
-  final int idInsideRuangan;
+class EditBarangContainer extends StatefulWidget {
+  final Barang_dlm_container barangDlmContainer;
+  // final int idInsideRuangan;
+  const EditBarangContainer({
+    super.key,
+    required this.barangDlmContainer,
+    // required this.idInsideRuangan
+  });
 
   @override
-  _AddBarangRuanganState createState() => _AddBarangRuanganState();
+  _EditBarangContainerState createState() => _EditBarangContainerState();
 }
 
-class _AddBarangRuanganState extends State<AddBarangRuangan> {
+class _EditBarangContainerState extends State<EditBarangContainer> {
   TextEditingController _BarangController = TextEditingController();
   TextEditingController _itemQtyController = TextEditingController();
   TextEditingController _descItemController = TextEditingController();
@@ -75,6 +84,18 @@ class _AddBarangRuanganState extends State<AddBarangRuangan> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _BarangController = TextEditingController(
+        text: widget.barangDlmContainer.nama_barang_dlm_container);
+    _descItemController = TextEditingController(
+        text: widget.barangDlmContainer.desc_barang_dlm_container);
+    _itemQtyController = TextEditingController(
+        text: widget.barangDlmContainer.qnty_barang_dlm_container.toString());
+    _selectedCategory = widget.barangDlmContainer.category_barang_dlm_container;
+  }
+
+  @override
   void dispose() {
     _BarangController.dispose();
     _descItemController.dispose();
@@ -86,40 +107,58 @@ class _AddBarangRuanganState extends State<AddBarangRuangan> {
     debugPrint(_title);
   }
 
-  Future<void> _postDataWithImage(BuildContext context, int idUser) async {
-    if (galleryFile == null) {
-      return; // Handle case where no image is selected
-    }
+  Future<void> _updateDataWithImage(BuildContext context, int idUser) async {
+    try {
+      var request = http.MultipartRequest(
+          'POST',
+          Uri.parse(
+              '${Endpoints.barangDlmContainerUpdate}/${widget.barangDlmContainer.id_barang_dlm_container}'));
+      request.fields['id_container'] = idUser.toString();
+      request.fields['nama_barang_dlm_container'] = _BarangController.text;
+      request.fields['desc_barang_dlm_container'] = _descItemController.text;
+      request.fields['qnty_barang_dlm_container'] = _itemQtyController.text;
+      request.fields['category_barang_dlm_container'] =
+          _selectedCategory; // Add selected category
 
-    var request = MultipartRequest('POST', Uri.parse(Endpoints.barangDlmRuanganCreate));
-    debugPrint(idUser.toString());
-    debugPrint(galleryFile!.path.toString());
-    request.fields['id_ruangan'] = idUser.toString();
-    request.fields['nama_barang_dlm_ruangan'] = _BarangController.text;
-    request.fields['desc_barang_dlm_ruangan'] = _descItemController.text;
-    request.fields['qnty_barang_dlm_ruangan'] = _itemQtyController.text;
-    request.fields['category_barang_dlm_ruangan'] =
-        _selectedCategory; // Add selected category
-
-    var multipartFile = await MultipartFile.fromPath(
-      'gambar_barang_dlm_ruangan',
-      galleryFile!.path,
-    );
-    request.files.add(multipartFile);
-
-    request.send().then((response) {
-      // Handle response (success or error)
-      if (response.statusCode == 201) {
-        debugPrint('Data and image posted successfully!');
-        context
-            .read<BarangDlmRuanganCubit>()
-            .fetchBarangDlmRuanganCubit(1, "", widget.idInsideRuangan, 1);
-        Navigator.pop(context);
-        // Navigator.pushReplacementNamed(context, '/home-screen');
-      } else {
-        debugPrint('Error posting data: ${response.statusCode}');
+      if (galleryFile != null) {
+        var multipartFile = await http.MultipartFile.fromPath(
+            'gambar_barang_dlm_container', galleryFile!.path);
+        request.files.add(multipartFile);
       }
-    });
+
+      // Debug prints to verify request details
+      debugPrint('Request URL: ${request.url}');
+      debugPrint('Request Fields: ${request.fields}');
+      debugPrint('Request Files: ${request.files}');
+
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        debugPrint('Menu updated successfully!');
+        // Navigator.pushReplacementNamed(context, '/home-screen');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => InsideBarangDlmContainer(
+              idContainer: widget.barangDlmContainer.id_container,
+              idInsideBarangDlmContainer: widget.barangDlmContainer.id_barang_dlm_container,
+              currentPages: 1,
+            ),
+          ),
+        );
+      } else {
+        debugPrint('Error updating menu: ${response.statusCode}');
+        var responseBody = await response.stream.bytesToString();
+        debugPrint('Response body: $responseBody');
+      }
+    } catch (e) {
+      if (e is http.ClientException) {
+        debugPrint('ClientException: ${e.message}');
+      } else if (e is SocketException) {
+        debugPrint('SocketException: ${e.message}');
+      } else {
+        debugPrint('Exception: ${e.toString()}');
+      }
+    }
   }
 
   @override
@@ -140,7 +179,7 @@ class _AddBarangRuanganState extends State<AddBarangRuangan> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Tambah Barang dalam Ruangan",
+                  "Edit Barang dalam Ruangan",
                   style: GoogleFonts.poppins(
                     fontSize: 20,
                     color: Colors.white,
@@ -195,31 +234,34 @@ class _AddBarangRuanganState extends State<AddBarangRuangan> {
                               width: double.infinity,
                               height: 150,
                               child: galleryFile == null
-                                  ? Center(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          const Icon(
-                                            Icons.add_photo_alternate_outlined,
-                                            color: Colors.grey,
-                                            size: 50,
+                                  ? (widget.barangDlmContainer
+                                          .gambar_barang_dlm_container.isNotEmpty
+                                      ? Image.network(
+                                          "${Endpoints.baseUAS}/static/img/${widget.barangDlmContainer.gambar_barang_dlm_container}")
+                                      : Center(
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              const Icon(
+                                                Icons
+                                                    .add_photo_alternate_outlined,
+                                                color: Colors.grey,
+                                                size: 50,
+                                              ),
+                                              Text(
+                                                'Pick your Image here',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 14,
+                                                  color: const Color.fromARGB(
+                                                      255, 124, 122, 122),
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
                                           ),
-                                          Text(
-                                            'Pick your Image here',
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 14,
-                                              color: const Color.fromARGB(
-                                                  255, 124, 122, 122),
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : Center(
-                                      child: Image.file(galleryFile!),
-                                    ),
+                                        ))
+                                  : Center(child: Image.file(galleryFile!)),
                             ),
                           ),
                           Container(
@@ -315,9 +357,10 @@ class _AddBarangRuanganState extends State<AddBarangRuangan> {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        String barangRuanganName = _BarangController.text;
-                        if (barangRuanganName.isNotEmpty) {
-                          _postDataWithImage(context, widget.idInsideRuangan);
+                        String barangContainerName = _BarangController.text;
+                        if (barangContainerName.isNotEmpty) {
+                          _updateDataWithImage(context,
+                              widget.barangDlmContainer.id_barang_dlm_container);
                         }
                       },
                       child: const Text('Save'),

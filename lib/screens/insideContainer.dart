@@ -9,14 +9,20 @@ import 'package:hometory/cubit/ruangan_cubit.dart';
 import 'package:hometory/dto/barang_dlm_container.dart';
 import 'package:hometory/dto/containers.dart';
 import 'package:hometory/endpoints/endpoints.dart';
+import 'package:hometory/screens/AddBarangContainer.dart';
+import 'package:hometory/screens/EditContainer.dart';
+import 'package:hometory/screens/insideBarangContainer.dart';
+import 'package:hometory/screens/insideRuangan.dart';
 import 'package:hometory/screens/tambahbarangDlmContainer.dart';
 import 'package:hometory/screens/tambahcontainerscreen.dart';
 import 'package:hometory/services/data_services.dart';
 
 class InsideContainer extends StatefulWidget {
-  const InsideContainer({super.key, required this.idInsideContianer});
+  const InsideContainer(
+      {super.key, required this.idRuangan, required this.idInsideContianer});
 
   final int idInsideContianer;
+  final int idRuangan;
 
   @override
   _InsideContainerState createState() => _InsideContainerState();
@@ -44,15 +50,47 @@ class _InsideContainerState extends State<InsideContainer> {
         backgroundColor: Colors.blueGrey,
         actions: [
           IconButton(
-              onPressed: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => EditKamar(),
-                //   ),
-                // );
-              },
-              icon: const Icon(Icons.edit)),
+            onPressed: () {
+              DataService.deleteContainer(idContainer!);
+              idContainer = null;
+              context.read<ContainersCubit>().fetchContainersCubit();
+              Navigator.pop(context);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      InsideRuangan(idInsideRuangan: widget.idRuangan),
+                ),
+              );
+            },
+            icon: const Icon(Icons.delete_sharp),
+          ),
+          BlocBuilder<ContainersCubit, ContainersState>(
+            builder: (context, state) {
+              Containers? filterContainer;
+              String imageUrl = 'assets/images/pfp.jpg'; // Default image
+              if (idContainer != null) {
+                filterContainer = state.ListOfContainers.firstWhere(
+                    (element) => element.id_containers == idContainer);
+                imageUrl = Uri.parse(
+                        '${Endpoints.baseUAS}/static/img/${filterContainer.gambar_containers}')
+                    .toString();
+              }
+              return IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditContainer(
+                        containers: filterContainer!,
+                      ),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.edit),
+              );
+            },
+          ),
         ],
       ),
       body: BlocBuilder<ContainersCubit, ContainersState>(
@@ -67,7 +105,7 @@ class _InsideContainerState extends State<InsideContainer> {
                 .toString();
           }
           return Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/images/bg 1.png'),
                 fit: BoxFit.cover,
@@ -102,10 +140,9 @@ class _InsideContainerState extends State<InsideContainer> {
                   builder: (context, state) {
                     List<Barang_dlm_container> filterBarangDlmContainer;
                     if (idContainer != null) {
-                      filterBarangDlmContainer = state.ListOfBarang_dlm_container
-                          .where((element) =>
-                              element.id_container == idContainer)
-                          .toList();
+                      filterBarangDlmContainer =
+                          state.ListOfBarang_dlm_container.where((element) =>
+                              element.id_container == idContainer).toList();
                     } else {
                       return const SizedBox();
                     }
@@ -119,13 +156,15 @@ class _InsideContainerState extends State<InsideContainer> {
                               .toString();
                           return GestureDetector(
                             onTap: () {
-                              // Navigator.push(context, MaterialPageRoute(
-                              //   builder: (context) {
-                              //     return InsideContainer(
-                              //       idInsideContianer: item.id_containers,
-                              //     );
-                              //   },
-                              // ));
+                              Navigator.push(context, MaterialPageRoute(
+                                builder: (context) {
+                                  return InsideBarangDlmContainer(
+                                    idContainer: item.id_container,
+                                    idInsideBarangDlmContainer: item.id_barang_dlm_container,
+                                    currentPages: 1,
+                                  );
+                                },
+                              ));
                             },
                             child: BarangWidget(
                               imageUrl: imageBarangDlmContainers,
@@ -151,10 +190,6 @@ class _InsideContainerState extends State<InsideContainer> {
               value: "tambah_Barang",
               child: Text("Tambah Barang"),
             ),
-            const PopupMenuItem(
-              value: "hapus_Container",
-              child: Text("Hapus Container"),
-            ),
           ],
           onSelected: (value) {
             switch (value) {
@@ -162,17 +197,10 @@ class _InsideContainerState extends State<InsideContainer> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => TambahbarangDlmContainer(
+                      builder: (context) => AddBarangContainer(
                             idInsideContainer: idContainer!,
                           )),
                 );
-                break;
-              case "hapus_Container":
-                DataService.deleteContainer(idContainer!);
-                idContainer = null;
-                // Navigator.pop(context);
-                Navigator.pop(context);
-                context.read<ContainersCubit>().fetchContainersCubit();
                 break;
             }
           },

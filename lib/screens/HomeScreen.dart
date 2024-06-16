@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 final listRuangan = state.ListOfRuangan.where(
                     (element) => element.id_pengguna == idPengguna).toList();
                 return Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage('assets/images/bg 1.png'),
                       fit: BoxFit.cover,

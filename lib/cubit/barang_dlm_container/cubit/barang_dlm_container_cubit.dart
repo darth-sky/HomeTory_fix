@@ -13,10 +13,15 @@ class BarangDlmContainerCubit extends Cubit<BarangDlmContainerState> {
     try {
       debugPrint("nice job barang dalam container!!!");
       List<Barang_dlm_container>? tempBarangDlmContainer;
+      // List<Barang_dlm_container>? tempBarangDlmContainerByUser;
       tempBarangDlmContainer = await DataService.fetchBarangDlmContainer();
+      // tempBarangDlmContainerByUser =
+      //     await DataService.fetchBarangDlmContainerbyUser();
       debugPrint("${tempBarangDlmContainer.length}");
       emit(BarangDlmContainerState(
-          ListOfBarang_dlm_container: tempBarangDlmContainer));
+          ListOfBarang_dlm_container: tempBarangDlmContainer,
+          // listOfBarang_dlm_container_byUser: tempBarangDlmContainerByUser
+          ));
     } catch (e) {
       debugPrint('eror barang dalam container');
     }

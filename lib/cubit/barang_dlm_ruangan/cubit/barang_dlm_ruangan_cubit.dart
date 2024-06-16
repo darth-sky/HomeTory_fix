@@ -10,20 +10,24 @@ class BarangDlmRuanganCubit extends Cubit<BarangDlmRuanganState> {
   BarangDlmRuanganCubit() : super(BarangDlmRuanganInitial());
 
   Future<void> fetchBarangDlmRuanganCubit(
-      int page, String search, int? idRuangan) async {
+      int page, String search, int? idRuangan, int id_pengguna) async {
     try {
       debugPrint("nice job ruangan!!!");
       List<Barang_dlm_ruangan>? tempBarangDlmRuangan;
       List<Barang_dlm_ruangan>? tempAllBarangDlmRuangan;
+      List<Barang_dlm_ruangan>? tempAllBarangDlmRuanganByUser;
       tempBarangDlmRuangan = await DataService.fetchBarangDlmRuangan(
           page, search,
           idRuangan: idRuangan);
       tempAllBarangDlmRuangan =
           await DataService.fetchAllBarangDlmRuangan(page);
+      tempAllBarangDlmRuanganByUser =
+          await DataService.fetchBarangDlmRuanganByUser(page, search, id_pengguna);
       debugPrint("${tempBarangDlmRuangan.length}");
       emit(BarangDlmRuanganState(
           ListOfBarang_dlm_ruangan: tempBarangDlmRuangan,
-          listAllBarang: tempAllBarangDlmRuangan));
+          listAllBarang: tempAllBarangDlmRuangan,
+          listOfBarang_dlm_ruangan_byUser: tempAllBarangDlmRuanganByUser));
     } catch (e) {
       debugPrint('eror barang ruangan');
     }

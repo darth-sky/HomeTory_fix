@@ -37,13 +37,13 @@ class _InsideRuanganState extends State<InsideRuangan> {
     context.read<ContainersCubit>().fetchContainersCubit();
     context
         .read<BarangDlmRuanganCubit>()
-        .fetchBarangDlmRuanganCubit(currentPage, "", widget.idInsideRuangan);
+        .fetchBarangDlmRuanganCubit(currentPage, "", widget.idInsideRuangan, 1);
   }
 
   void _fetchData() {
     context
         .read<BarangDlmRuanganCubit>()
-        .fetchBarangDlmRuanganCubit(currentPage, "", widget.idInsideRuangan);
+        .fetchBarangDlmRuanganCubit(currentPage, "", widget.idInsideRuangan, 1);
   }
 
   void _incrementPage() {
@@ -76,6 +76,13 @@ class _InsideRuanganState extends State<InsideRuangan> {
     int? idRuangan = widget.idInsideRuangan;
     return Scaffold(
       appBar: AppBar(
+        // title: BlocBuilder<RuanganCubit, RuanganState>(
+        //   builder: (context, state) {
+        //     Ruangan filterRuangan;
+        //     filterRuangan = state.ListOfRuangan.where((element) => elemet);
+        //     return const Text("");
+        //   },
+        // ),
         title: const Text('InsideRuangan'),
         backgroundColor: Colors.blueGrey,
         leading: IconButton(
@@ -86,9 +93,7 @@ class _InsideRuanganState extends State<InsideRuangan> {
           icon: const Icon(Icons.arrow_back),
         ),
         actions: [
-          IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.search)),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
           BlocBuilder<RuanganCubit, RuanganState>(
             builder: (context, state) {
               Ruangan? filterRuangan;
@@ -122,7 +127,7 @@ class _InsideRuanganState extends State<InsideRuangan> {
                 .toString();
           }
           return Container(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/images/bg 1.png'),
                 fit: BoxFit.cover,
@@ -175,9 +180,10 @@ class _InsideRuanganState extends State<InsideRuangan> {
                                   List<Containers> filterContainers;
                                   if (idRuangan != null) {
                                     filterContainers =
-                                        state.ListOfContainers.where((element) =>
-                                                element.id_ruangan == idRuangan)
-                                            .toList();
+                                        state.ListOfContainers.where(
+                                            (element) =>
+                                                element.id_ruangan ==
+                                                idRuangan).toList();
                                   } else {
                                     return const SizedBox();
                                   }
@@ -196,6 +202,7 @@ class _InsideRuanganState extends State<InsideRuangan> {
                                               return InsideContainer(
                                                 idInsideContianer:
                                                     item.id_containers,
+                                                idRuangan: item.id_ruangan,
                                               );
                                             },
                                           ));
@@ -217,12 +224,11 @@ class _InsideRuanganState extends State<InsideRuangan> {
                                       List<Barang_dlm_ruangan>
                                           filterBarangDlmRuangan;
                                       if (idRuangan != null) {
-                                        filterBarangDlmRuangan = state
-                                            .ListOfBarang_dlm_ruangan
-                                            .where((element) =>
-                                                element.id_ruangan ==
-                                                idRuangan)
-                                            .toList();
+                                        filterBarangDlmRuangan =
+                                            state.ListOfBarang_dlm_ruangan
+                                                .where((element) =>
+                                                    element.id_ruangan ==
+                                                    idRuangan).toList();
                                       } else {
                                         return const SizedBox();
                                       }
@@ -250,10 +256,9 @@ class _InsideRuanganState extends State<InsideRuangan> {
                                               ));
                                             },
                                             child: BarangWidget(
-                                              imageUrl:
-                                                  imageBarangDlmRuangan,
-                                              barangName: item
-                                                  .nama_barang_dlm_ruangan,
+                                              imageUrl: imageBarangDlmRuangan,
+                                              barangName:
+                                                  item.nama_barang_dlm_ruangan,
                                             ),
                                           );
                                         },
@@ -266,12 +271,12 @@ class _InsideRuanganState extends State<InsideRuangan> {
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     IconButton(
-                                      icon: Icon(Icons.arrow_back),
+                                      icon: const Icon(Icons.arrow_back),
                                       onPressed: _decrementPage,
                                     ),
                                     Text('Page $currentPage'),
                                     IconButton(
-                                      icon: Icon(Icons.arrow_forward),
+                                      icon: const Icon(Icons.arrow_forward),
                                       onPressed: _incrementPage,
                                     ),
                                   ],
