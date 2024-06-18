@@ -4,6 +4,7 @@ import 'package:hometory/components/customSearchDelegate.dart';
 import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
 import 'package:hometory/screens/BarangScreen.dart';
 import 'package:hometory/screens/HomeScreen.dart';
+import 'package:hometory/screens/konfirmasiPro.dart';
 
 class Myhomepage extends StatefulWidget {
   const Myhomepage({Key? key, required this.title}) : super(key: key);
@@ -72,17 +73,15 @@ class _MyhomepageState extends State<Myhomepage> {
                       height: 10,
                     ),
                     ListTile(
-                      leading: const Icon(Icons.settings),
-                      title: const Text('Settings'),
-                      onTap: () {
-                        // Navigator.pushNamed(context, '/setting-screen');
-                      },
-                    ),
-                    ListTile(
                       leading: const Icon(Icons.card_giftcard),
                       title: const Text('Want to go premium?'),
                       onTap: () {
-                        // Navigator.pushNamed(context, '/profile-screen');
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const KonfirmasiPro(),
+                          ),
+                        );
                       },
                     ),
                     ListTile(

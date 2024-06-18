@@ -29,6 +29,14 @@ class InsideRuangan extends StatefulWidget {
 class _InsideRuanganState extends State<InsideRuangan> {
   int currentPage = 1;
 
+  void _deleteRuangan(int ruanganHapus) async {
+    // final int idRuangan = widget.idInsideRuangan;
+    // final response =
+    await DataService.deleteRuangan(ruanganHapus);
+    context.read<RuanganCubit>().fetchRuanganCubit();
+    // if(response.sta)
+  }
+
   @override
   void initState() {
     debugPrint(widget.idInsideRuangan.toString());
@@ -93,7 +101,15 @@ class _InsideRuanganState extends State<InsideRuangan> {
           icon: const Icon(Icons.arrow_back),
         ),
         actions: [
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+          // IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+          IconButton(
+            onPressed: () {
+              _deleteRuangan(idRuangan!);
+              Navigator.pop(context);
+              idRuangan = null;
+            },
+            icon: const Icon(Icons.delete_sharp),
+          ),
           BlocBuilder<RuanganCubit, RuanganState>(
             builder: (context, state) {
               Ruangan? filterRuangan;
@@ -307,10 +323,10 @@ class _InsideRuanganState extends State<InsideRuangan> {
               value: "tambah_item",
               child: Text("Tambah Item"),
             ),
-            const PopupMenuItem(
-              value: "hapus_ruangan",
-              child: Text("Hapus Ruangan"),
-            ),
+            // const PopupMenuItem(
+            //   value: "hapus_ruangan",
+            //   child: Text("Hapus Ruangan"),
+            // ),
           ],
           onSelected: (value) {
             switch (value) {
@@ -332,12 +348,11 @@ class _InsideRuanganState extends State<InsideRuangan> {
                           )),
                 );
                 break;
-              case "hapus_ruangan":
-                DataService.deleteRuangan(idRuangan!);
-                idRuangan = null;
-                Navigator.pop(context);
-                context.read<RuanganCubit>().fetchRuanganCubit();
-                break;
+              // case "hapus_ruangan":
+              //   // _deleteBarang(idRuangan!);
+              //   Navigator.pop(context);
+              //   idRuangan = null;
+              //   break;
             }
           },
         ),

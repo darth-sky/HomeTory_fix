@@ -10,6 +10,7 @@ import 'package:hometory/cubit/container/cubit/containers_cubit.dart';
 import 'package:hometory/dto/barang_dlm_container.dart';
 import 'package:hometory/dto/barang_dlm_ruangan.dart';
 import 'package:hometory/endpoints/endpoints.dart';
+import 'package:hometory/screens/insideBarangContainer.dart';
 import 'package:hometory/screens/insideBarangDlmRuangan.dart';
 import 'package:hometory/screens/insideContainer.dart';
 
@@ -24,13 +25,21 @@ class _BarangScreenState extends State<BarangScreen> {
   late TextEditingController _searchController;
   int currentPage = 1;
 
+  late TextEditingController _searchContainerController;
+  int currentControllerPage = 1;
+
   @override
   void initState() {
     super.initState();
+    _searchContainerController = TextEditingController();
     _searchController = TextEditingController();
     _fetchData();
-    context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit();
     final idPengguna = context.read<AuthCubit>().state.idPengguna;
+    context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit(
+        currentControllerPage,
+        _searchContainerController.text,
+        null,
+        idPengguna!);
     context.read<BarangDlmRuanganCubit>().fetchBarangDlmRuanganCubit(
         currentPage, _searchController.text, null, idPengguna!);
   }
@@ -39,6 +48,25 @@ class _BarangScreenState extends State<BarangScreen> {
     final idPengguna = context.read<AuthCubit>().state.idPengguna;
     context.read<BarangDlmRuanganCubit>().fetchBarangDlmRuanganCubit(
         currentPage, _searchController.text, null, idPengguna!);
+    context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit(
+        currentControllerPage,
+        _searchContainerController.text,
+        null,
+        idPengguna!);
+  }
+
+  void _incrementControllerPage() {
+    setState(() {
+      currentControllerPage++;
+      _fetchData();
+    });
+  }
+
+  void _decrementControllerPage() {
+    setState(() {
+      currentControllerPage--;
+      _fetchData();
+    });
   }
 
   void _incrementPage() {
@@ -75,47 +103,79 @@ class _BarangScreenState extends State<BarangScreen> {
                 const TabBar(tabs: [
                   Tab(
                     icon: Icon(Icons.storage),
-                    child: Text('Barang '),
+                    child: Text('BarangContainer'),
                   ),
                   Tab(
                     icon: Icon(Icons.category),
-                    child: Text('Barang '),
+                    child: Text('BarangRuangan'),
                   ),
                 ]),
                 Expanded(
                   child: TabBarView(
                     children: [
-                      BlocBuilder<BarangDlmContainerCubit,
-                          BarangDlmContainerState>(
-                        builder: (context, state) {
-                          List<Barang_dlm_container> barangDlmContainer =
-                              state.ListOfBarang_dlm_container;
-                          return ListView.builder(
-                            itemCount: barangDlmContainer.length,
-                            itemBuilder: (context, index) {
-                              var item = barangDlmContainer[index];
-                              final imageContainers = Uri.parse(
-                                      '${Endpoints.baseUAS}/static/img/${item.gambar_barang_dlm_container}')
-                                  .toString();
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(context, MaterialPageRoute(
-                                    builder: (context) {
-                                      return InsideContainer(
-                                        idInsideContianer: item.id_container,
-                                        idRuangan: item.id_container,
-                                      );
-                                    },
-                                  ));
-                                },
-                                child: BarangWidget(
-                                  imageUrl: imageContainers,
-                                  barangName: item.nama_barang_dlm_container,
-                                ),
-                              );
-                            },
-                          );
-                        },
+                      Column(
+                        children: [
+                          CustomSearchBox(
+                              controller: _searchContainerController,
+                              onChanged: (value) => _fetchData(),
+                              onClear: () => _fetchData(),
+                              hintText: 'Search barang dalam container...'),
+                          Expanded(
+                            child: BlocBuilder<BarangDlmContainerCubit,
+                                BarangDlmContainerState>(
+                              builder: (context, state) {
+                                List<Barang_dlm_container> barangDlmContainer =
+                                    state.listOfBarang_dlm_container_byUser;
+                                return ListView.builder(
+                                  itemCount: barangDlmContainer.length,
+                                  itemBuilder: (context, index) {
+                                    var item = barangDlmContainer[index];
+                                    final imageContainers = Uri.parse(
+                                            '${Endpoints.baseUAS}/static/img/${item.gambar_barang_dlm_container}')
+                                        .toString();
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(context,
+                                            MaterialPageRoute(
+                                          builder: (context) {
+                                            return InsideBarangDlmContainer(
+                                              idInsideBarangDlmContainer:
+                                                  item.id_barang_dlm_container,
+                                              idContainer: item.id_container,
+                                              currentPages: 1,
+                                              // idInsideContianer:
+                                              //     item.id_container,
+                                              // idRuangan: item.id_container,
+                                            );
+                                          },
+                                        ));
+                                      },
+                                      child: BarangWidget(
+                                        imageUrl: imageContainers,
+                                        barangName:
+                                            item.nama_barang_dlm_container,
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.arrow_back),
+                                onPressed: _decrementControllerPage,
+                              ),
+                              Text('Page $currentControllerPage'),
+                              IconButton(
+                                icon: const Icon(Icons.arrow_forward),
+                                onPressed: _incrementControllerPage,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                       Column(
                         children: [
@@ -123,7 +183,7 @@ class _BarangScreenState extends State<BarangScreen> {
                               controller: _searchController,
                               onChanged: (value) => _fetchData(),
                               onClear: () => _fetchData(),
-                              hintText: 'search barang dalam ruangan..'),
+                              hintText: 'search barang dalam container...'),
                           Expanded(
                             child: BlocBuilder<BarangDlmRuanganCubit,
                                 BarangDlmRuanganState>(

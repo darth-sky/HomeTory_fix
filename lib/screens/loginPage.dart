@@ -34,14 +34,13 @@ class _LoginPageState extends State<LoginPage> {
       final loggedIn = Login.fromJson(data);
       await SecureStorageUtil.storage
           .write(key: tokenStoreName, value: loggedIn.accessToken);
-      authCubit.login(loggedIn.accessToken, loggedIn.idUser);
+      authCubit.login(loggedIn.accessToken, loggedIn.idUser, loggedIn.roles);
       Navigator.pushReplacementNamed(context, "/home-screen");
       debugPrint(loggedIn.accessToken);
     } else {
       debugPrint("failed not");
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -67,19 +66,21 @@ class _LoginPageState extends State<LoginPage> {
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
                   Image.asset(
                     'assets/images/logo.png',
-                    height: 200,
+                    // height: 180,
                     width: 200,
-                  ),
-                  const SizedBox(
-                    height: 10,
+                    fit: BoxFit.fitHeight,
                   ),
                   const Text(
                     'Welcome!',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Text(
+                    'Please Sign In!',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -106,18 +107,18 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(
                     height: 10,
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 25.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Text(
-                          'Lupa Password?',
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      ],
-                    ),
-                  ),
+                  // const Padding(
+                  //   padding: EdgeInsets.symmetric(horizontal: 25.0),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.end,
+                  //     children: [
+                  //       Text(
+                  //         'Lupa Password?',
+                  //         style: TextStyle(color: Colors.black),
+                  //       ),
+                  //     ],
+                  //   ),
+                  // ),
                   const SizedBox(
                     height: 25,
                   ),

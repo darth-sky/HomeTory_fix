@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hometory/components/barangWidget.dart';
 import 'package:hometory/cubit/barang_dlm_container/cubit/barang_dlm_container_cubit.dart';
-import 'package:hometory/cubit/barang_dlm_ruangan/cubit/barang_dlm_ruangan_cubit.dart';
 import 'package:hometory/cubit/container/cubit/containers_cubit.dart';
 import 'package:hometory/cubit/ruangan_cubit.dart';
 import 'package:hometory/dto/barang_dlm_container.dart';
@@ -13,8 +11,6 @@ import 'package:hometory/screens/AddBarangContainer.dart';
 import 'package:hometory/screens/EditContainer.dart';
 import 'package:hometory/screens/insideBarangContainer.dart';
 import 'package:hometory/screens/insideRuangan.dart';
-import 'package:hometory/screens/tambahbarangDlmContainer.dart';
-import 'package:hometory/screens/tambahcontainerscreen.dart';
 import 'package:hometory/services/data_services.dart';
 
 class InsideContainer extends StatefulWidget {
@@ -29,16 +25,44 @@ class InsideContainer extends StatefulWidget {
 }
 
 class _InsideContainerState extends State<InsideContainer> {
+  int currentPage = 1;
+
   @override
   void initState() {
-    // debugPrint(widget.idInsideRuangan.toString());
     super.initState();
     context.read<RuanganCubit>().fetchRuanganCubit();
     context.read<ContainersCubit>().fetchContainersCubit();
-    context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit();
+    _fetchData();
+  }
 
-    // _barangDlmRuangan =
-    //     DataService.fetchBarangDlmRuanganId(widget.idInsideRuangan);
+  void _fetchData() {
+    context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit(
+        currentPage, "", widget.idInsideContianer, 1);
+  }
+
+  void _incrementPage() {
+    setState(() {
+      currentPage++;
+      _fetchData();
+    });
+  }
+
+  void _decrementPage() {
+    if (currentPage > 1) {
+      setState(() {
+        currentPage--;
+        _fetchData();
+      });
+    }
+  }
+
+  void _resetPages() {
+    if (currentPage > 1) {
+      setState(() {
+        currentPage = 1;
+        _fetchData();
+      });
+    }
   }
 
   @override
@@ -46,8 +70,15 @@ class _InsideContainerState extends State<InsideContainer> {
     int? idContainer = widget.idInsideContianer;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('insideContainer'),
+        title: const Text('Inside Container'),
         backgroundColor: Colors.blueGrey,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+            _resetPages();
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -136,18 +167,21 @@ class _InsideContainerState extends State<InsideContainer> {
                   height: 10,
                 ),
                 Text(filterContianer!.nama_containers),
-                BlocBuilder<BarangDlmContainerCubit, BarangDlmContainerState>(
-                  builder: (context, state) {
-                    List<Barang_dlm_container> filterBarangDlmContainer;
-                    if (idContainer != null) {
-                      filterBarangDlmContainer =
-                          state.ListOfBarang_dlm_container.where((element) =>
-                              element.id_container == idContainer).toList();
-                    } else {
-                      return const SizedBox();
-                    }
-                    return Expanded(
-                      child: ListView.builder(
+                Expanded(
+                  child: BlocBuilder<BarangDlmContainerCubit,
+                      BarangDlmContainerState>(
+                    builder: (context, state) {
+                      List<Barang_dlm_container> filterBarangDlmContainer;
+                      if (idContainer != null) {
+                        filterBarangDlmContainer = state
+                            .ListOfBarang_dlm_container
+                            .where((element) =>
+                                element.id_container == idContainer)
+                            .toList();
+                      } else {
+                        return const SizedBox();
+                      }
+                      return ListView.builder(
                         itemCount: filterBarangDlmContainer.length,
                         itemBuilder: (context, index) {
                           var item = filterBarangDlmContainer[index];
@@ -160,7 +194,8 @@ class _InsideContainerState extends State<InsideContainer> {
                                 builder: (context) {
                                   return InsideBarangDlmContainer(
                                     idContainer: item.id_container,
-                                    idInsideBarangDlmContainer: item.id_barang_dlm_container,
+                                    idInsideBarangDlmContainer:
+                                        item.id_barang_dlm_container,
                                     currentPages: 1,
                                   );
                                 },
@@ -172,9 +207,23 @@ class _InsideContainerState extends State<InsideContainer> {
                             ),
                           );
                         },
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: _decrementPage,
+                    ),
+                    Text('Page $currentPage'),
+                    IconButton(
+                      icon: const Icon(Icons.arrow_forward),
+                      onPressed: _incrementPage,
+                    ),
+                  ],
                 ),
               ],
             ),

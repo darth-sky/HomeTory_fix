@@ -113,7 +113,7 @@ class _AddBarangContainerState extends State<AddBarangContainer> {
       // Handle response (success or error)
       if (response.statusCode == 201) {
         debugPrint('Data and image posted successfully!');
-        context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit();
+        context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit(1, "", widget.idInsideContainer, 1);
         Navigator.pop(context);
         // Navigator.pushReplacementNamed(context, '/home-screen');
       } else {
@@ -125,6 +125,7 @@ class _AddBarangContainerState extends State<AddBarangContainer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.blueGrey,
       appBar: AppBar(
         backgroundColor: Colors.transparent,

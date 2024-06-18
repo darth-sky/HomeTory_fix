@@ -40,14 +40,14 @@ class _InsideBarangDlmContainerState extends State<InsideBarangDlmContainer> {
     debugPrint('ini currentpages ${widget.currentPages.toString()}');
     context.read<RuanganCubit>().fetchRuanganCubit();
     context.read<ContainersCubit>().fetchContainersCubit();
-    context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit();
+    context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit(widget.currentPages, '', widget.idContainer, 1);
   }
 
   void _deleteBarang(int idBarangDlmContainer) async {
     await DataService.deleteBarangDlmContainer(idBarangDlmContainer!);
     context
                   .read<BarangDlmContainerCubit>()
-                  .fetchBarangDlmContainerCubit();
+                  .fetchBarangDlmContainerCubit(widget.currentPages, '', widget.idContainer, 1);
   }
 
   @override

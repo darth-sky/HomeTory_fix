@@ -79,17 +79,49 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AddRuangan(),
-            ),
+      floatingActionButton: BlocBuilder<AuthCubit, AuthState>(
+        builder: (context, state) {
+          final idPengguna = state.idPengguna;
+          return BlocBuilder<RuanganCubit, RuanganState>(
+            builder: (context, state) {
+              final roles = context.read<AuthCubit>().state.roles;
+              final listRuangan = state.ListOfRuangan.where(
+                  (element) => element.id_pengguna == idPengguna).toList();
+              return FloatingActionButton(
+                onPressed: () {
+                  debugPrint('listruangan = ${listRuangan.length}');
+                  if (roles == 'pro') {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AddRuangan(),
+                      ),
+                    );
+                  } else if (roles == 'biasa') {
+                    if (listRuangan.length < 1) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AddRuangan(),
+                        ),
+                      );
+                    } else {
+                      debugPrint('hanya yang pro saja');
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text(
+                              'Hanya Pengguna Pro yang bisa membuat lebih dari 1 ruangan')));
+                      // AlertDialog(
+                      //   title: Text('hanya pro saja'),
+                      // );
+                    }
+                  }
+                },
+                backgroundColor: Colors.blueGrey[300],
+                child: const Icon(Icons.add),
+              );
+            },
           );
         },
-        backgroundColor: Colors.blueGrey[300],
-        child: const Icon(Icons.add),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );

@@ -21,5 +21,4 @@ class ContainersCubit extends Cubit<ContainersState> {
       debugPrint("eror fetching data containers");
     }
   }
-  
 }

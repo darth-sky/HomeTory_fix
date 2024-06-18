@@ -103,7 +103,7 @@ class _TambahbarangDlmContainerState extends State<TambahbarangDlmContainer> {
       if (response.statusCode == 201) {
         debugPrint('Data and image posted successfully!');
         // context.read<BarangDlmRuanganCubit>().fetchBarangDlmRuanganCubit();
-        context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit();
+        // context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit();
         Navigator.pop(context);
         // Navigator.pushReplacementNamed(context, '/inside-ruangan');
         // Navigator.pushReplacement(context,

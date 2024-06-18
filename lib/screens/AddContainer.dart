@@ -115,6 +115,7 @@ class _AddContainerState extends State<AddContainer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.blueGrey,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -132,7 +133,7 @@ class _AddContainerState extends State<AddContainer> {
                 Text(
                   "Tambah Container dalam Ruangan",
                   style: GoogleFonts.poppins(
-                    fontSize: 30,
+                    fontSize: 28,
                     color: Colors.white,
                     fontWeight: FontWeight.w700,
                   ),

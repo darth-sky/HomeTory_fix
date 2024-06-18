@@ -91,7 +91,8 @@ class _AddBarangRuanganState extends State<AddBarangRuangan> {
       return; // Handle case where no image is selected
     }
 
-    var request = MultipartRequest('POST', Uri.parse(Endpoints.barangDlmRuanganCreate));
+    var request =
+        MultipartRequest('POST', Uri.parse(Endpoints.barangDlmRuanganCreate));
     debugPrint(idUser.toString());
     debugPrint(galleryFile!.path.toString());
     request.fields['id_ruangan'] = idUser.toString();
@@ -125,6 +126,7 @@ class _AddBarangRuanganState extends State<AddBarangRuangan> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.blueGrey,
       appBar: AppBar(
         backgroundColor: Colors.transparent,

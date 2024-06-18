@@ -34,14 +34,24 @@ class Endpoints {
   // barang dalam container
   static const String barangDlmContainerRead =
       "$baseUAS/api/v1/barang_dlm_container/read";
+  static const String barangDlmContainerReadAll =
+      "$baseUAS/api/v1/barang_dlm_container/readAll";
   static const String barangDlmContainerCreate =
       "$baseUAS/api/v1/barang_dlm_container/create";
   static const String barangDlmContainerDelete =
       "$baseUAS/api/v1/barang_dlm_container/delete";
   static const String barangDlmContainerUpdate =
       "$baseUAS/api/v1/barang_dlm_container/update";
+  static const String barangDlmContainerByUser =
+      "$baseUAS/api/v1/barang_dlm_container/readByUserContainer";
 
   // auth
   static const String login = "$baseUAS/api/v1/auth/login";
   static const String SignUp = "$baseUAS/api/v1/auth/register";
+
+  // role
+  static const String updateRole = "$baseUAS/api/v1/pengguna/updateRole";
+
+  // user
+  static const String userRead = "$baseUAS/api/v1/pengguna/read";
 }

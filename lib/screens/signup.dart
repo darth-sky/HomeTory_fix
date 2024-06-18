@@ -19,31 +19,24 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void sendSignUp(context, AuthCubit authCubit) async {
-    final email = _emailController.text;
+  void sendSignUp() async {
+    final email = _nameController.text;
     final password = _passwordController.text;
     debugPrint(email);
     debugPrint(password);
     final response = await DataService.sendSignUpData(email, password);
     debugPrint(response.statusCode.toString());
-    if (response.statusCode == 200) {
+    if (response.statusCode == 201) {
       debugPrint("sending success");
-      final data = jsonDecode(response.body);
-      final loggedIn = Login.fromJson(data);
-      await SecureStorageUtil.storage
-          .write(key: tokenStoreName, value: loggedIn.accessToken);
-      authCubit.login(loggedIn.accessToken, loggedIn.idUser);
       Navigator.pushReplacement(context, MaterialPageRoute(
         builder: (context) {
-          return LoginPage();
+          return const LoginPage();
         },
       ));
-      debugPrint(loggedIn.accessToken);
     } else {
-      debugPrint("failed not");
+      debugPrint("failed not cannot sign up");
     }
   }
 
@@ -51,7 +44,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final authCubit = BlocProvider.of<AuthCubit>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -78,14 +70,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   Image.asset(
                     'assets/images/logo.png',
-                    height: 200,
+                    // height: 180,
                     width: 200,
-                  ),
-                  const SizedBox(
-                    height: 10,
+                    fit: BoxFit.fitHeight,
                   ),
                   const Text(
                     'Welcome!',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Text(
+                    'Please Register an Account!',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -102,12 +99,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   const SizedBox(
                     height: 10,
-                  ),
-                  MyTextfield(
-                    controller: _emailController,
-                    hintText: 'Email',
-                    obscureText: false,
-                    prefixIcon: Icons.email,
                   ),
                   const SizedBox(
                     height: 10,
@@ -140,7 +131,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     height: 50,
                     child: ElevatedButton(
                       onPressed: () {
-                        // sendLogin(context, authCubit);
+                        sendSignUp();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
