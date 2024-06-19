@@ -6,6 +6,7 @@ import 'package:hometory/cubit/container/cubit/containers_cubit.dart';
 import 'package:hometory/cubit/ruangan_cubit.dart';
 import 'package:hometory/dto/barang_dlm_container.dart';
 import 'package:hometory/dto/barang_dlm_ruangan.dart';
+import 'package:hometory/dto/lokasiBrgContainer.dart';
 import 'package:hometory/endpoints/endpoints.dart';
 import 'package:hometory/screens/EditBarangContainer.dart';
 import 'package:hometory/screens/editBarangRuangan.dart';
@@ -31,6 +32,8 @@ class InsideBarangDlmContainer extends StatefulWidget {
 }
 
 class _InsideBarangDlmContainerState extends State<InsideBarangDlmContainer> {
+  Future<List<locationBrgContainer>>? _locationbarangContainer;
+
   @override
   void initState() {
     super.initState();
@@ -40,14 +43,16 @@ class _InsideBarangDlmContainerState extends State<InsideBarangDlmContainer> {
     debugPrint('ini currentpages ${widget.currentPages.toString()}');
     context.read<RuanganCubit>().fetchRuanganCubit();
     context.read<ContainersCubit>().fetchContainersCubit();
-    context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit(widget.currentPages, '', widget.idContainer, 1);
+    context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit(
+        widget.currentPages, '', widget.idContainer, 1);
+    _locationbarangContainer = DataService.fetchBrgContainerLocation(
+        widget.idInsideBarangDlmContainer.toString());
   }
 
   void _deleteBarang(int idBarangDlmContainer) async {
     await DataService.deleteBarangDlmContainer(idBarangDlmContainer!);
-    context
-                  .read<BarangDlmContainerCubit>()
-                  .fetchBarangDlmContainerCubit(widget.currentPages, '', widget.idContainer, 1);
+    context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit(
+        widget.currentPages, '', widget.idContainer, 1);
   }
 
   @override
@@ -78,6 +83,8 @@ class _InsideBarangDlmContainerState extends State<InsideBarangDlmContainer> {
                 imageUrl = Uri.parse(
                         '${Endpoints.baseUAS}/static/img/${filterBarangContainer.gambar_barang_dlm_container}')
                     .toString();
+              } else {
+                return const SizedBox();
               }
               return IconButton(
                 onPressed: () {
@@ -140,12 +147,40 @@ class _InsideBarangDlmContainerState extends State<InsideBarangDlmContainer> {
                       ),
                     ),
                     const SizedBox(height: 16.0),
-                    const Text(
-                      'Kamar Mandi > Lemari',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.black,
-                      ),
+                    FutureBuilder<List<locationBrgContainer>>(
+                      future: _locationbarangContainer,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          final data = snapshot.data!;
+                          return Container(
+                            // Tambahkan Container sebagai parent
+                            height:
+                                30, // Atur tinggi Container sesuai kebutuhan
+                            child: ListView.builder(
+                              itemCount: data.length,
+                              itemBuilder: (context, index) {
+                                final item = data[index];
+                                return Row(
+                                  children: [
+                                    Text(
+                                      'Lokasi: ${item.nama_ruangan} > ${item.nama_container}',
+                                      style: const TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text("error lokasi: ${snapshot.error}");
+                        }
+                        return const Center(
+                            child:
+                                CircularProgressIndicator()); // Tambahkan Center jika perlu
+                      },
                     ),
                     const SizedBox(height: 16.0),
                     Card(

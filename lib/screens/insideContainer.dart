@@ -166,7 +166,6 @@ class _InsideContainerState extends State<InsideContainer> {
                 const SizedBox(
                   height: 10,
                 ),
-                Text(filterContianer!.nama_containers),
                 Expanded(
                   child: BlocBuilder<BarangDlmContainerCubit,
                       BarangDlmContainerState>(

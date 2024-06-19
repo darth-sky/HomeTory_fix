@@ -4,6 +4,7 @@ import 'package:hometory/cubit/barang_dlm_ruangan/cubit/barang_dlm_ruangan_cubit
 import 'package:hometory/cubit/container/cubit/containers_cubit.dart';
 import 'package:hometory/cubit/ruangan_cubit.dart';
 import 'package:hometory/dto/barang_dlm_ruangan.dart';
+import 'package:hometory/dto/lokasiBrgRuangan.dart';
 import 'package:hometory/endpoints/endpoints.dart';
 import 'package:hometory/screens/editBarangRuangan.dart';
 import 'package:hometory/screens/insideRuangan.dart';
@@ -26,6 +27,8 @@ class InsideBarangDlmRuangan extends StatefulWidget {
 }
 
 class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
+  Future<List<locationBrgRuangan>>? _location;
+
   @override
   void initState() {
     super.initState();
@@ -35,9 +38,10 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
     debugPrint('ini currentpages ${widget.currentPages.toString()}');
     context.read<RuanganCubit>().fetchRuanganCubit();
     context.read<ContainersCubit>().fetchContainersCubit();
-    context
-        .read<BarangDlmRuanganCubit>()
-        .fetchBarangDlmRuanganCubit(widget.currentPages, '', widget.idRuangan, 1);
+    context.read<BarangDlmRuanganCubit>().fetchBarangDlmRuanganCubit(
+        widget.currentPages, '', widget.idRuangan, 1);
+    _location = DataService.fetchBrgRuanganLocation(
+        widget.idInsideBarangDlmRuangan.toString());
   }
 
   @override
@@ -138,12 +142,40 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
                       ),
                     ),
                     const SizedBox(height: 16.0),
-                    const Text(
-                      'Kamar Mandi > Lemari',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.black,
-                      ),
+                    FutureBuilder<List<locationBrgRuangan>>(
+                      future: _location,
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          final data = snapshot.data!;
+                          return Container(
+                            // Tambahkan Container sebagai parent
+                            height:
+                                30, // Atur tinggi Container sesuai kebutuhan
+                            child: ListView.builder(
+                              itemCount: data.length,
+                              itemBuilder: (context, index) {
+                                final item = data[index];
+                                return Row(
+                                  children: [
+                                    Text(
+                                      'Lokasi: ${item.nama_ruangan}',
+                                      style: TextStyle(
+                                        fontSize: 16.0,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text("error lokasi: ${snapshot.error}");
+                        }
+                        return Center(
+                            child:
+                                CircularProgressIndicator()); // Tambahkan Center jika perlu
+                      },
                     ),
                     const SizedBox(height: 16.0),
                     Card(

@@ -137,7 +137,8 @@ class _EditBarangRuanganState extends State<EditBarangRuangan> {
           MaterialPageRoute(
             builder: (context) => InsideBarangDlmRuangan(
               idRuangan: widget.barangDlmRuangan.id_ruangan,
-              idInsideBarangDlmRuangan: widget.barangDlmRuangan.id_barang_dlm_ruangan,
+              idInsideBarangDlmRuangan:
+                  widget.barangDlmRuangan.id_barang_dlm_ruangan,
               currentPages: 1,
             ),
           ),
@@ -197,6 +198,7 @@ class _EditBarangRuanganState extends State<EditBarangRuangan> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.blueGrey,
       appBar: AppBar(
         backgroundColor: Colors.transparent,

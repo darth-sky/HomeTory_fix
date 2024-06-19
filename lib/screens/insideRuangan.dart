@@ -34,6 +34,8 @@ class _InsideRuanganState extends State<InsideRuangan> {
     // final response =
     await DataService.deleteRuangan(ruanganHapus);
     context.read<RuanganCubit>().fetchRuanganCubit();
+    Navigator.pop(context);
+    Navigator.pop(context);
     // if(response.sta)
   }
 
@@ -105,7 +107,6 @@ class _InsideRuanganState extends State<InsideRuangan> {
           IconButton(
             onPressed: () {
               _deleteRuangan(idRuangan!);
-              Navigator.pop(context);
               idRuangan = null;
             },
             icon: const Icon(Icons.delete_sharp),
@@ -113,8 +114,12 @@ class _InsideRuanganState extends State<InsideRuangan> {
           BlocBuilder<RuanganCubit, RuanganState>(
             builder: (context, state) {
               Ruangan? filterRuangan;
-              filterRuangan = state.ListOfRuangan.firstWhere(
-                  (element) => element.id_ruangan == idRuangan);
+              if (idRuangan != null) {
+                filterRuangan = state.ListOfRuangan.firstWhere(
+                    (element) => element.id_ruangan == idRuangan);
+              } else {
+                return SizedBox();
+              }
               return IconButton(
                   onPressed: () {
                     Navigator.push(
@@ -154,7 +159,7 @@ class _InsideRuanganState extends State<InsideRuangan> {
                 const SizedBox(
                   height: 10,
                 ),
-                Row(
+                Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
@@ -168,6 +173,7 @@ class _InsideRuanganState extends State<InsideRuangan> {
                             const Icon(Icons.error),
                       ),
                     ),
+                    // Text(filterRuangan!.nama_ruangan)
                   ],
                 ),
                 const SizedBox(

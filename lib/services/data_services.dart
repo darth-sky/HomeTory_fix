@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:hometory/dto/barang_dlm_container.dart';
 import 'package:hometory/dto/barang_dlm_ruangan.dart';
 import 'package:hometory/dto/containers.dart';
+import 'package:hometory/dto/lokasiBrgContainer.dart';
+import 'package:hometory/dto/lokasiBrgRuangan.dart';
 import 'package:hometory/dto/pengguna.dart';
 import 'package:hometory/dto/ruangan.dart';
 
@@ -34,6 +36,51 @@ class DataService {
     } else {
       // Handle error
       throw Exception('Failed to load data pengguna ${response.statusCode}');
+    }
+  }
+
+  static Future<List<Pengguna>> fetchUserById(String idPengguna) async {
+    final response = await http.get(Uri.parse('${Endpoints.userReadId}/$idPengguna'));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      return (data['datas'] as List<dynamic>)
+          .map((item) => Pengguna.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } else {
+      // Tangani error
+      throw Exception(
+          'Gagal memuat data pengguna dengan id $idPengguna, status code: ${response.statusCode}');
+    }
+  }
+
+  static Future<List<locationBrgRuangan>> fetchBrgRuanganLocation(String idBarangRuangan) async {
+    final response = await http.get(Uri.parse('${Endpoints.barangDlmRuanganLocation}/$idBarangRuangan'));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      return (data['datas'] as List<dynamic>)
+          .map((item) => locationBrgRuangan.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } else {
+      // Tangani error
+      throw Exception(
+          'Gagal memuat data pengguna dengan id $idBarangRuangan, status code: ${response.statusCode}');
+    }
+  }
+
+  static Future<List<locationBrgContainer>> fetchBrgContainerLocation(String idBarangContainer) async {
+    final response = await http.get(Uri.parse('${Endpoints.barangDlmContainerLocation}/$idBarangContainer'));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      return (data['datas'] as List<dynamic>)
+          .map((item) => locationBrgContainer.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } else {
+      // Tangani error
+      throw Exception(
+          'Gagal memuat data pengguna dengan id $idBarangContainer, status code: ${response.statusCode}');
     }
   }
 
@@ -68,8 +115,6 @@ class DataService {
       throw Exception('Failed to load data ${response.statusCode}');
     }
   }
-
-  
 
   // static Future<List<Barang_dlm_ruangan>> fetchBarangDlmRuangan() async {
   //   (int id_ruangan, int page, String search) async {
@@ -173,7 +218,8 @@ class DataService {
           .toList();
     } else {
       // Handle error
-      throw Exception('Failed to load data ${response.statusCode} dari fetchBarangDlmContainer');
+      throw Exception(
+          'Failed to load data ${response.statusCode} dari fetchBarangDlmContainer');
     }
   }
 
@@ -270,11 +316,10 @@ class DataService {
     return response;
   }
 
-  static Future<http.Response> sendUpdateRole(
-      int idPengguna) async {
+  static Future<http.Response> sendUpdateRole(int idPengguna) async {
     final url = Uri.parse('${Endpoints.updateRole}/$idPengguna');
     final response = await http.put(
-      url, 
+      url,
     );
     return response;
   }
@@ -300,8 +345,8 @@ class DataService {
 
   static Future<List<Barang_dlm_container>> fetchAllBarangDlmContainer(
       int page) async {
-    final uri =
-        Uri.parse(Endpoints.barangDlmContainerReadAll).replace(queryParameters: {
+    final uri = Uri.parse(Endpoints.barangDlmContainerReadAll)
+        .replace(queryParameters: {
       'page': page.toString(),
     });
     final response = await http.get(uri);
@@ -313,7 +358,8 @@ class DataService {
           .toList();
     } else {
       // Handle error
-      throw Exception('Failed to load data ${response.statusCode} dari fetch all barang dalam container' );
+      throw Exception(
+          'Failed to load data ${response.statusCode} dari fetch all barang dalam container');
     }
   }
 }

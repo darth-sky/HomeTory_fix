@@ -21,26 +21,47 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  void sendLogin(context, AuthCubit authCubit) async {
-    final email = _emailController.text;
-    final password = _passwordController.text;
-    debugPrint(email);
-    debugPrint(password);
-    final response = await DataService.sendLoginData(email, password);
-    debugPrint(response.statusCode.toString());
-    if (response.statusCode == 200) {
-      debugPrint("sending success");
-      final data = jsonDecode(response.body);
-      final loggedIn = Login.fromJson(data);
-      await SecureStorageUtil.storage
-          .write(key: tokenStoreName, value: loggedIn.accessToken);
-      authCubit.login(loggedIn.accessToken, loggedIn.idUser, loggedIn.roles);
-      Navigator.pushReplacementNamed(context, "/home-screen");
-      debugPrint(loggedIn.accessToken);
+  void sendLogin(BuildContext context, AuthCubit authCubit) async {
+  final email = _emailController.text;
+  final password = _passwordController.text;
+  debugPrint(email);
+  debugPrint(password);
+  final response = await DataService.sendLoginData(email, password);
+  debugPrint(response.statusCode.toString());
+  if (response.statusCode == 200) {
+    debugPrint("sending success");
+    final data = jsonDecode(response.body);
+    final loggedIn = Login.fromJson(data);
+    await SecureStorageUtil.storage
+        .write(key: tokenStoreName, value: loggedIn.accessToken);
+    authCubit.login(loggedIn.accessToken, loggedIn.idUser, loggedIn.roles, loggedIn.username);
+    Navigator.pushReplacementNamed(context, "/home-screen");
+    debugPrint(loggedIn.accessToken);
+  } else {
+    if (response.statusCode == 401) {
+      // Display alert dialog for incorrect username or password
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Login Failed"),
+            content: const Text("Incorrect username or password. Please try again."),
+            actions: <Widget>[
+              TextButton(
+                child: const Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
     } else {
       debugPrint("failed not");
     }
   }
+}
 
   @override
   Widget build(BuildContext context) {

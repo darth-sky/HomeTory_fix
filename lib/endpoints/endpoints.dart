@@ -30,6 +30,8 @@ class Endpoints {
       "$baseUAS/api/v1/barang_dlm_ruangan/update";
   static const String barangDlmRuanganByUser =
       "$baseUAS/api/v1/barang_dlm_ruangan/readByUser";
+  static const String barangDlmRuanganLocation =
+      "$baseUAS/api/v1/barang_dlm_ruangan/readTotalBarang";
 
   // barang dalam container
   static const String barangDlmContainerRead =
@@ -44,6 +46,8 @@ class Endpoints {
       "$baseUAS/api/v1/barang_dlm_container/update";
   static const String barangDlmContainerByUser =
       "$baseUAS/api/v1/barang_dlm_container/readByUserContainer";
+  static const String barangDlmContainerLocation =
+      "$baseUAS/api/v1/barang_dlm_container/readTotalBarangContainer";
 
   // auth
   static const String login = "$baseUAS/api/v1/auth/login";
@@ -54,4 +58,5 @@ class Endpoints {
 
   // user
   static const String userRead = "$baseUAS/api/v1/pengguna/read";
+  static const String userReadId = "$baseUAS/api/v1/pengguna/readByIdUser";
 }

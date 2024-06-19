@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hometory/components/roomInventoryWidget.dart';
 import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
 import 'package:hometory/cubit/ruangan_cubit.dart';
+import 'package:hometory/dto/ruangan.dart';
 // import 'package:hometory/dto/ruangan.dart';
 import 'package:hometory/endpoints/endpoints.dart';
 import 'package:hometory/screens/addRuangan.dart';
@@ -33,8 +34,13 @@ class _HomeScreenState extends State<HomeScreen> {
           return Center(
             child: BlocBuilder<RuanganCubit, RuanganState>(
               builder: (context, state) {
-                final listRuangan = state.ListOfRuangan.where(
-                    (element) => element.id_pengguna == idPengguna).toList();
+                List<Ruangan> filterRuangan;
+                if (idPengguna != null) {
+                  filterRuangan = state.ListOfRuangan.where(
+                      (element) => element.id_pengguna == idPengguna).toList();
+                } else {
+                  return const SizedBox();
+                }
                 return Container(
                   decoration: const BoxDecoration(
                     image: DecorationImage(
@@ -43,9 +49,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   child: ListView.builder(
-                    itemCount: listRuangan.length,
+                    itemCount: filterRuangan.length,
                     itemBuilder: (context, index) {
-                      final item = listRuangan[index];
+                      final item = filterRuangan[index];
                       final imageUrl = Uri.parse(
                               '${Endpoints.baseUAS}/static/img/${item.gambar_ruangan}')
                           .toString();
