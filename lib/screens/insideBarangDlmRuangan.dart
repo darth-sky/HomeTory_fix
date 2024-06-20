@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
 import 'package:hometory/cubit/barang_dlm_ruangan/cubit/barang_dlm_ruangan_cubit.dart';
 import 'package:hometory/cubit/container/cubit/containers_cubit.dart';
 import 'package:hometory/cubit/ruangan_cubit.dart';
@@ -32,14 +33,15 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
   @override
   void initState() {
     super.initState();
-    debugPrint('dibawah print');
-    debugPrint(widget.idInsideBarangDlmRuangan.toString());
-    debugPrint(widget.idRuangan.toString());
-    debugPrint('ini currentpages ${widget.currentPages.toString()}');
+    // debugPrint('dibawah print');
+    // debugPrint(widget.idInsideBarangDlmRuangan.toString());
+    // debugPrint(widget.idRuangan.toString());
+    // debugPrint('ini currentpages ${widget.currentPages.toString()}');
+    final idPengguna = context.read<AuthCubit>().state.idPengguna;
     context.read<RuanganCubit>().fetchRuanganCubit();
     context.read<ContainersCubit>().fetchContainersCubit();
     context.read<BarangDlmRuanganCubit>().fetchBarangDlmRuanganCubit(
-        widget.currentPages, '', widget.idRuangan, 1);
+        widget.currentPages, '', widget.idRuangan, idPengguna!);
     _location = DataService.fetchBrgRuanganLocation(
         widget.idInsideBarangDlmRuangan.toString());
   }
@@ -54,10 +56,11 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
         actions: [
           IconButton(
             onPressed: () {
+              final idPengguna = context.read<AuthCubit>().state.idPengguna;
               DataService.deleteBarangDlmRuangan(idBarangDlmRuangan!);
               idBarangDlmRuangan = null;
               context.read<BarangDlmRuanganCubit>().fetchBarangDlmRuanganCubit(
-                  widget.currentPages, "", idBarangDlmRuangan, 1);
+                  widget.currentPages, "", idBarangDlmRuangan, idPengguna!);
               Navigator.pop(context);
               Navigator.pushReplacement(
                 context,
@@ -74,12 +77,14 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
               Barang_dlm_ruangan? filterBarangRuangan;
               String imageUrl = 'assets/images/pfp.jpg'; // Default image
               if (idBarangDlmRuangan != null) {
-                filterBarangRuangan = state.ListOfBarang_dlm_ruangan.firstWhere(
+                filterBarangRuangan = state.listOfBarang_dlm_ruangan_byUser.firstWhere(
                     (element) =>
                         element.id_barang_dlm_ruangan == idBarangDlmRuangan);
                 imageUrl = Uri.parse(
                         '${Endpoints.baseUAS}/static/img/${filterBarangRuangan.gambar_barang_dlm_ruangan}')
                     .toString();
+              } else {
+                return const SizedBox();
               }
               return IconButton(
                 onPressed: () {
@@ -103,7 +108,7 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
           Barang_dlm_ruangan? filterBarangDlmRuangan;
           String imageUrl = 'assets/images/pfp.jpg'; // Default image
           if (idBarangDlmRuangan != null) {
-            filterBarangDlmRuangan = state.ListOfBarang_dlm_ruangan.firstWhere(
+            filterBarangDlmRuangan = state.listOfBarang_dlm_ruangan_byUser.firstWhere(
                 (element) =>
                     element.id_barang_dlm_ruangan == idBarangDlmRuangan);
             imageUrl = Uri.parse(
@@ -159,7 +164,7 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
                                   children: [
                                     Text(
                                       'Lokasi: ${item.nama_ruangan}',
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 16.0,
                                         color: Colors.black,
                                       ),
@@ -172,7 +177,7 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
                         } else if (snapshot.hasError) {
                           return Text("error lokasi: ${snapshot.error}");
                         }
-                        return Center(
+                        return const Center(
                             child:
                                 CircularProgressIndicator()); // Tambahkan Center jika perlu
                       },

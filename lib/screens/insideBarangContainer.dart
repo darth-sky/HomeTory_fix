@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
 import 'package:hometory/cubit/barang_dlm_container/cubit/barang_dlm_container_cubit.dart';
 import 'package:hometory/cubit/barang_dlm_ruangan/cubit/barang_dlm_ruangan_cubit.dart';
 import 'package:hometory/cubit/container/cubit/containers_cubit.dart';
@@ -41,18 +42,21 @@ class _InsideBarangDlmContainerState extends State<InsideBarangDlmContainer> {
     debugPrint(widget.idInsideBarangDlmContainer.toString());
     debugPrint(widget.idContainer.toString());
     debugPrint('ini currentpages ${widget.currentPages.toString()}');
+    
     context.read<RuanganCubit>().fetchRuanganCubit();
     context.read<ContainersCubit>().fetchContainersCubit();
+    final idPengguna = context.read<AuthCubit>().state.idPengguna;
     context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit(
-        widget.currentPages, '', widget.idContainer, 1);
+        widget.currentPages, '', widget.idContainer, idPengguna!);
     _locationbarangContainer = DataService.fetchBrgContainerLocation(
         widget.idInsideBarangDlmContainer.toString());
   }
 
   void _deleteBarang(int idBarangDlmContainer) async {
+    final idPengguna = context.read<AuthCubit>().state.idPengguna;
     await DataService.deleteBarangDlmContainer(idBarangDlmContainer!);
     context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit(
-        widget.currentPages, '', widget.idContainer, 1);
+        widget.currentPages, '', widget.idContainer, idPengguna!);
   }
 
   @override
@@ -77,7 +81,7 @@ class _InsideBarangDlmContainerState extends State<InsideBarangDlmContainer> {
               String imageUrl = 'assets/images/pfp.jpg'; // Default image
               if (idBarangDlmContainer != null) {
                 filterBarangContainer =
-                    state.ListOfBarang_dlm_container.firstWhere((element) =>
+                    state.listOfBarang_dlm_container_byUser.firstWhere((element) =>
                         element.id_barang_dlm_container ==
                         idBarangDlmContainer);
                 imageUrl = Uri.parse(
@@ -109,7 +113,7 @@ class _InsideBarangDlmContainerState extends State<InsideBarangDlmContainer> {
           String imageUrl = 'assets/images/pfp.jpg'; // Default image
           if (idBarangDlmContainer != null) {
             filterBarangDlmContainer =
-                state.ListOfBarang_dlm_container.firstWhere((element) =>
+                state.listOfBarang_dlm_container_byUser.firstWhere((element) =>
                     element.id_barang_dlm_container == idBarangDlmContainer);
             imageUrl = Uri.parse(
                     '${Endpoints.baseUAS}/static/img/${filterBarangDlmContainer.gambar_barang_dlm_container}')

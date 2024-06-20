@@ -142,7 +142,7 @@ class _BarangScreenState extends State<BarangScreen> {
                                               idInsideBarangDlmContainer:
                                                   item.id_barang_dlm_container,
                                               idContainer: item.id_container,
-                                              currentPages: 1,
+                                              currentPages: currentPage,
                                               // idInsideContianer:
                                               //     item.id_container,
                                               // idRuangan: item.id_container,

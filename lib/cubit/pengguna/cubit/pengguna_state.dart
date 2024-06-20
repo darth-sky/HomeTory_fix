@@ -13,6 +13,10 @@ final class PenggunaInitial extends PenggunaState {
               id_pengguna: 1,
               username: 'Test User',
               role: 'biasa',
-              foto_profil: 'pfp.jpg')
+              foto_profil: 'pfp.jpg',
+              email: 'user@gmail.com',
+              longtitude: 0,
+              latitude: 0,
+              )
         ]);
 }

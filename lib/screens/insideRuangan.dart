@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hometory/components/barangWidget.dart';
 import 'package:hometory/components/containersWidget.dart';
+import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
 import 'package:hometory/cubit/barang_dlm_ruangan/cubit/barang_dlm_ruangan_cubit.dart';
 import 'package:hometory/cubit/container/cubit/containers_cubit.dart';
 import 'package:hometory/cubit/ruangan_cubit.dart';
@@ -45,15 +46,17 @@ class _InsideRuanganState extends State<InsideRuangan> {
     super.initState();
     context.read<RuanganCubit>().fetchRuanganCubit();
     context.read<ContainersCubit>().fetchContainersCubit();
+    final idPengguna = context.read<AuthCubit>().state.idPengguna;
     context
         .read<BarangDlmRuanganCubit>()
-        .fetchBarangDlmRuanganCubit(currentPage, "", widget.idInsideRuangan, 1);
+        .fetchBarangDlmRuanganCubit(currentPage, "", widget.idInsideRuangan, idPengguna!);
   }
 
   void _fetchData() {
+    final idPengguna = context.read<AuthCubit>().state.idPengguna;
     context
         .read<BarangDlmRuanganCubit>()
-        .fetchBarangDlmRuanganCubit(currentPage, "", widget.idInsideRuangan, 1);
+        .fetchBarangDlmRuanganCubit(currentPage, "", widget.idInsideRuangan, idPengguna!);
   }
 
   void _incrementPage() {

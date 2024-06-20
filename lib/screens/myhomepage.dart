@@ -1,10 +1,17 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:hometory/components/customSearchDelegate.dart';
 import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
+import 'package:hometory/dto/pengguna.dart';
 import 'package:hometory/screens/BarangScreen.dart';
 import 'package:hometory/screens/HomeScreen.dart';
+import 'package:hometory/screens/ProfileScreen.dart';
+import 'package:hometory/screens/google_map_page.dart';
 import 'package:hometory/screens/konfirmasiPro.dart';
+import 'package:hometory/services/data_services.dart';
 
 class Myhomepage extends StatefulWidget {
   const Myhomepage({Key? key, required this.title}) : super(key: key);
@@ -16,8 +23,16 @@ class Myhomepage extends StatefulWidget {
 }
 
 class _MyhomepageState extends State<Myhomepage> {
+  Future<List<Pengguna>>? _pengguna;
   int _selectedIndex = 0;
   BottomNavigationBarType _bottomNavType = BottomNavigationBarType.shifting;
+
+  @override
+  void initState() {
+    super.initState();
+    final idPengguna = context.read<AuthCubit>().state.idPengguna;
+    _pengguna = DataService.fetchUserById(idPengguna.toString());
+  }
 
   final List<Widget> _screens = [
     const HomeScreen(),
@@ -55,7 +70,7 @@ class _MyhomepageState extends State<Myhomepage> {
                     return UserAccountsDrawerHeader(
                       accountName: Text(state.username),
                       accountEmail: Text(state.roles),
-                      currentAccountPicture: CircleAvatar(
+                      currentAccountPicture: const CircleAvatar(
                         backgroundImage: AssetImage('assets/images/pfp.jpg'),
                       ),
                       decoration: const BoxDecoration(color: Colors.blueGrey),
@@ -77,13 +92,100 @@ class _MyhomepageState extends State<Myhomepage> {
                     );
                   },
                 ),
-                ListTile(
-                  leading: const Icon(Icons.person),
-                  title: const Text('Profile'),
-                  onTap: () {
-                    Navigator.pushNamed(context, '/inside-ruangan');
+                FutureBuilder<List<Pengguna>>(
+                  future: _pengguna,
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final data = snapshot.data!;
+                      return Container(
+                        // Tambahkan Container sebagai parent
+                        height: 45, // Atur tinggi Container sesuai kebutuhan
+                        child: ListView.builder(
+                          itemCount: data.length,
+                          itemBuilder: (context, index) {
+                            final item = data[index];
+                            return ListTile(
+                              leading: const Icon(Icons.person),
+                              title: const Text('Profile'),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProfileScreen(
+                                      pengguna: item,
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text("error lokasi: ${snapshot.error}");
+                    }
+                    return const Center(
+                        child:
+                            CircularProgressIndicator()); // Tambahkan Center jika perlu
                   },
                 ),
+                FutureBuilder<List<Pengguna>>(
+                  future: _pengguna,
+                  builder: (context, snapshot) {
+                final idPengguna = context.read<AuthCubit>().state.idPengguna;
+                    if (snapshot.hasData) {
+                      final data = snapshot.data!;
+                      return Container(
+                        // Tambahkan Container sebagai parent
+                        height: 45, // Atur tinggi Container sesuai kebutuhan
+                        child: ListView.builder(
+                          itemCount: data.length,
+                          itemBuilder: (context, index) {
+                            final item = data[index];
+                            return ListTile(
+                              leading: const Icon(Icons.card_giftcard),
+                              title: const Text('google map'),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        GoogleMapPage(user: item, idPengguna: idPengguna!,),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text("error lokasi: ${snapshot.error}");
+                    }
+                    return const Center(
+                        child:
+                            CircularProgressIndicator()); // Tambahkan Center jika perlu
+                  },
+                ),
+
+                // ListTile(
+                //   leading: const Icon(Icons.card_giftcard),
+                //   title: const Text('google map'),
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       MaterialPageRoute(
+                //         builder: (context) => const GoogleMapPage(),
+                //       ),
+                //     );
+                //   },
+                // ),
+                // ListTile(
+                //   leading: const Icon(Icons.person),
+                //   title: const Text('Profile'),
+                //   onTap: () {
+                //     Navigator.pushNamed(context, '/inside-ruangan');
+                //   },
+                // ),
                 ListTile(
                   leading: const Icon(Icons.logout),
                   title: const Text("Logout"),

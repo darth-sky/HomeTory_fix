@@ -4,12 +4,9 @@ import 'package:hometory/components/roomInventoryWidget.dart';
 import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
 import 'package:hometory/cubit/ruangan_cubit.dart';
 import 'package:hometory/dto/ruangan.dart';
-// import 'package:hometory/dto/ruangan.dart';
 import 'package:hometory/endpoints/endpoints.dart';
 import 'package:hometory/screens/addRuangan.dart';
 import 'package:hometory/screens/insideRuangan.dart';
-import 'package:hometory/screens/tambahRuanganscreen.dart';
-// import 'package:hometory/services/data_services.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -34,13 +31,14 @@ class _HomeScreenState extends State<HomeScreen> {
           return Center(
             child: BlocBuilder<RuanganCubit, RuanganState>(
               builder: (context, state) {
-                List<Ruangan> filterRuangan;
-                if (idPengguna != null) {
-                  filterRuangan = state.ListOfRuangan.where(
-                      (element) => element.id_pengguna == idPengguna).toList();
-                } else {
+                if (idPengguna == null) {
                   return const SizedBox();
                 }
+
+                List<Ruangan> filterRuangan = state.ListOfRuangan
+                    .where((element) => element.id_pengguna == idPengguna)
+                    .toList();
+
                 return Container(
                   decoration: const BoxDecoration(
                     image: DecorationImage(
@@ -48,37 +46,42 @@ class _HomeScreenState extends State<HomeScreen> {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  child: ListView.builder(
-                    itemCount: filterRuangan.length,
-                    itemBuilder: (context, index) {
-                      final item = filterRuangan[index];
-                      final imageUrl = Uri.parse(
-                              '${Endpoints.baseUAS}/static/img/${item.gambar_ruangan}')
-                          .toString();
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => InsideRuangan(
-                                idInsideRuangan: item.id_ruangan,
-                              ),
-                            ),
-                          );
-                        },
-                        child: RoomInventoryWidget(
-                          image: Image.network(
-                            imageUrl,
-                            errorBuilder: (context, error, stackTrace) =>
-                                const Icon(Icons.error),
+                  child: filterRuangan.isEmpty
+                      ? const Center(child: Text('No rooms available'))
+                      : Expanded(
+                          child: ListView.builder(
+                            itemCount: filterRuangan.length,
+                            itemBuilder: (context, index) {
+                              final item = filterRuangan[index];
+                              final imageUrl = Uri.parse(
+                                      '${Endpoints.baseUAS}/static/img/${item.gambar_ruangan}')
+                                  .toString();
+                              return GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => InsideRuangan(
+                                        idInsideRuangan: item.id_ruangan,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: RoomInventoryWidget(
+                                  image: Image.network(
+                                    imageUrl,
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            const Icon(Icons.error),
+                                  ),
+                                  roomName: item.nama_ruangan,
+                                  itemCount: 1,
+                                  containerCount: 1,
+                                ),
+                              );
+                            },
                           ),
-                          roomName: item.nama_ruangan,
-                          itemCount: 1,
-                          containerCount: 1,
                         ),
-                      );
-                    },
-                  ),
                 );
               },
             ),
@@ -91,8 +94,9 @@ class _HomeScreenState extends State<HomeScreen> {
           return BlocBuilder<RuanganCubit, RuanganState>(
             builder: (context, state) {
               final roles = context.read<AuthCubit>().state.roles;
-              final listRuangan = state.ListOfRuangan.where(
-                  (element) => element.id_pengguna == idPengguna).toList();
+              final listRuangan = state.ListOfRuangan
+                  .where((element) => element.id_pengguna == idPengguna)
+                  .toList();
               return FloatingActionButton(
                 onPressed: () {
                   debugPrint('listruangan = ${listRuangan.length}');
@@ -116,9 +120,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                           content: Text(
                               'Hanya Pengguna Pro yang bisa membuat lebih dari 1 ruangan')));
-                      // AlertDialog(
-                      //   title: Text('hanya pro saja'),
-                      // );
                     }
                   }
                 },

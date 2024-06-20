@@ -97,10 +97,10 @@ class _EditRuanganState extends State<EditRuangan> {
 
       var response = await request.send();
       if (response.statusCode == 200) {
-        debugPrint('Menu updated successfully!');
+        debugPrint('Ruangan updated successfully!');
         Navigator.pushReplacementNamed(context, '/home-screen');
       } else {
-        debugPrint('Error updating menu: ${response.statusCode}');
+        debugPrint('Error updating Ruangan: ${response.statusCode}');
         var responseBody = await response.stream.bytesToString();
         debugPrint('Response body: $responseBody');
       }
@@ -133,7 +133,7 @@ class _EditRuanganState extends State<EditRuangan> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Edit Menu",
+                  "Edit Ruangan",
                   style: GoogleFonts.poppins(
                     fontSize: 32,
                     color: Colors.white,

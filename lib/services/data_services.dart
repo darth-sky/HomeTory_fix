@@ -8,6 +8,9 @@ import 'package:hometory/dto/lokasiBrgContainer.dart';
 import 'package:hometory/dto/lokasiBrgRuangan.dart';
 import 'package:hometory/dto/pengguna.dart';
 import 'package:hometory/dto/ruangan.dart';
+import 'package:hometory/dto/totalBrgContainer.dart';
+import 'package:hometory/dto/totalBrgRuangan.dart';
+import 'package:hometory/dto/totalRuangan.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:hometory/endpoints/endpoints.dart';
@@ -81,6 +84,51 @@ class DataService {
       // Tangani error
       throw Exception(
           'Gagal memuat data pengguna dengan id $idBarangContainer, status code: ${response.statusCode}');
+    }
+  }
+
+  static Future<List<totalRuangan>> fetchTotalRuangan(String idPengguna) async {
+    final response = await http.get(Uri.parse('${Endpoints.userRuangan}/$idPengguna'));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      return (data['datas'] as List<dynamic>)
+          .map((item) => totalRuangan.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } else {
+      // Tangani error
+      throw Exception(
+          'Gagal memuat data pengguna dengan id $idPengguna, status code: ${response.statusCode}');
+    }
+  }
+
+  static Future<List<totalBrgContainer>> fetchTotalBrgContainer(String idPengguna) async {
+    final response = await http.get(Uri.parse('${Endpoints.userBrgContainer}/$idPengguna'));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      return (data['datas'] as List<dynamic>)
+          .map((item) => totalBrgContainer.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } else {
+      // Tangani error
+      throw Exception(
+          'Gagal memuat data pengguna dengan id $idPengguna, status code: ${response.statusCode}');
+    }
+  }
+
+  static Future<List<totalBrgRuangan>> fetchTotalBrgRuangan(String idPengguna) async {
+    final response = await http.get(Uri.parse('${Endpoints.userBrgRuangan}/$idPengguna'));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body) as Map<String, dynamic>;
+      return (data['datas'] as List<dynamic>)
+          .map((item) => totalBrgRuangan.fromJson(item as Map<String, dynamic>))
+          .toList();
+    } else {
+      // Tangani error
+      throw Exception(
+          'Gagal memuat data pengguna dengan id $idPengguna, status code: ${response.statusCode}');
     }
   }
 

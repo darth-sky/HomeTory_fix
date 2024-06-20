@@ -59,4 +59,10 @@ class Endpoints {
   // user
   static const String userRead = "$baseUAS/api/v1/pengguna/read";
   static const String userReadId = "$baseUAS/api/v1/pengguna/readByIdUser";
+  static const String userUpdate = "$baseUAS/api/v1/pengguna/update";
+  static const String userRuangan = "$baseUAS/api/v1/pengguna/userReadRuangan";
+  static const String userBrgContainer =
+      "$baseUAS/api/v1/pengguna/userReadBrgContainer";
+  static const String userBrgRuangan =
+      "$baseUAS/api/v1/pengguna/userReadBrgRuangan";
 }
