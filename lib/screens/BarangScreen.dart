@@ -91,7 +91,7 @@ class _BarangScreenState extends State<BarangScreen> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/bg 1.png'),
+            image: AssetImage('assets/images/bg 2.jpg'),
             fit: BoxFit.cover,
           ),
         ),

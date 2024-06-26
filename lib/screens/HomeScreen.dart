@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hometory/components/roomInventoryWidget.dart';
 import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
 import 'package:hometory/cubit/ruangan_cubit.dart';
-import 'package:hometory/dto/ruangan.dart';
 import 'package:hometory/endpoints/endpoints.dart';
 import 'package:hometory/screens/addRuangan.dart';
 import 'package:hometory/screens/insideRuangan.dart';
@@ -31,57 +30,55 @@ class _HomeScreenState extends State<HomeScreen> {
           return Center(
             child: BlocBuilder<RuanganCubit, RuanganState>(
               builder: (context, state) {
-                if (idPengguna == null) {
-                  return const SizedBox();
-                }
-
-                List<Ruangan> filterRuangan = state.ListOfRuangan
-                    .where((element) => element.id_pengguna == idPengguna)
-                    .toList();
-
+                final listRuangan = state.ListOfRuangan.where(
+                    (element) => element.id_pengguna == idPengguna).toList();
                 return Container(
                   decoration: const BoxDecoration(
                     image: DecorationImage(
-                      image: AssetImage('assets/images/bg 1.png'),
+                      image: AssetImage('assets/images/bg 2.jpg'),
                       fit: BoxFit.cover,
                     ),
                   ),
-                  child: filterRuangan.isEmpty
-                      ? const Center(child: Text('No rooms available'))
-                      : Expanded(
-                          child: ListView.builder(
-                            itemCount: filterRuangan.length,
-                            itemBuilder: (context, index) {
-                              final item = filterRuangan[index];
-                              final imageUrl = Uri.parse(
-                                      '${Endpoints.baseUAS}/static/img/${item.gambar_ruangan}')
-                                  .toString();
-                              return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => InsideRuangan(
-                                        idInsideRuangan: item.id_ruangan,
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: RoomInventoryWidget(
-                                  image: Image.network(
-                                    imageUrl,
-                                    errorBuilder:
-                                        (context, error, stackTrace) =>
-                                            const Icon(Icons.error),
-                                  ),
-                                  roomName: item.nama_ruangan,
-                                  itemCount: 1,
-                                  containerCount: 1,
-                                ),
-                              );
-                            },
+                  child: GridView.builder(
+                    // padding: const EdgeInsets.all(20),
+                    gridDelegate:
+                        const SliverGridDelegateWithMaxCrossAxisExtent(
+                      maxCrossAxisExtent: 200,
+                      childAspectRatio: 0.8,
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20,
+                    ),
+                    itemCount: listRuangan.length,
+                    itemBuilder: (context, index) {
+                      final item = listRuangan[index];
+                      final imageUrl = Uri.parse(
+                              '${Endpoints.baseUAS}/static/img/${item.gambar_ruangan}')
+                          .toString();
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => InsideRuangan(
+                                idInsideRuangan: item.id_ruangan,
+                              ),
+                            ),
+                          );
+                        },
+                        child: RoomInventoryWidget(
+                          image: Image.network(
+                            imageUrl,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const Icon(Icons.error),
                           ),
+                          roomName: item.nama_ruangan,
+                          itemCount: 1, // Replace with actual item count
+                          containerCount:
+                              1, // Replace with actual container count
                         ),
+                      );
+                    },
+                  ),
                 );
               },
             ),
@@ -94,9 +91,8 @@ class _HomeScreenState extends State<HomeScreen> {
           return BlocBuilder<RuanganCubit, RuanganState>(
             builder: (context, state) {
               final roles = context.read<AuthCubit>().state.roles;
-              final listRuangan = state.ListOfRuangan
-                  .where((element) => element.id_pengguna == idPengguna)
-                  .toList();
+              final listRuangan = state.ListOfRuangan.where(
+                  (element) => element.id_pengguna == idPengguna).toList();
               return FloatingActionButton(
                 onPressed: () {
                   debugPrint('listruangan = ${listRuangan.length}');

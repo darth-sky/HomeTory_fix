@@ -62,13 +62,13 @@ class _InsideBarangDlmRuanganState extends State<InsideBarangDlmRuangan> {
               context.read<BarangDlmRuanganCubit>().fetchBarangDlmRuanganCubit(
                   widget.currentPages, "", idBarangDlmRuangan, idPengguna!);
               Navigator.pop(context);
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      InsideRuangan(idInsideRuangan: widget.idRuangan),
-                ),
-              );
+              // Navigator.pushReplacement(
+              //   context,
+              //   MaterialPageRoute(
+              //     builder: (context) =>
+              //         InsideRuangan(idInsideRuangan: widget.idRuangan),
+              //   ),
+              // );
             },
             icon: const Icon(Icons.delete_sharp),
           ),

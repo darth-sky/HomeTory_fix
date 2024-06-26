@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hometory/components/barangWidget.dart';
+import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
 import 'package:hometory/cubit/barang_dlm_container/cubit/barang_dlm_container_cubit.dart';
 import 'package:hometory/cubit/container/cubit/containers_cubit.dart';
 import 'package:hometory/cubit/ruangan_cubit.dart';
@@ -36,8 +37,9 @@ class _InsideContainerState extends State<InsideContainer> {
   }
 
   void _fetchData() {
+    final idPengguna = context.read<AuthCubit>().state.idPengguna;
     context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit(
-        currentPage, "", widget.idInsideContianer, 1);
+        currentPage, "", widget.idInsideContianer, idPengguna!);
   }
 
   void _incrementPage() {
@@ -163,8 +165,12 @@ class _InsideContainerState extends State<InsideContainer> {
                     ),
                   ],
                 ),
-                const SizedBox(
-                  height: 10,
+                Text(
+                  filterContianer?.nama_containers ?? 'no name',
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Expanded(
                   child: BlocBuilder<BarangDlmContainerCubit,
@@ -172,11 +178,9 @@ class _InsideContainerState extends State<InsideContainer> {
                     builder: (context, state) {
                       List<Barang_dlm_container> filterBarangDlmContainer;
                       if (idContainer != null) {
-                        filterBarangDlmContainer = state
-                            .ListOfBarang_dlm_container
-                            .where((element) =>
-                                element.id_container == idContainer)
-                            .toList();
+                        filterBarangDlmContainer =
+                            state.ListOfBarang_dlm_container.where((element) =>
+                                element.id_container == idContainer).toList();
                       } else {
                         return const SizedBox();
                       }

@@ -1,9 +1,9 @@
 class Endpoints {
   // UAS
   static const String host = "10.0.2.2";
-  static const String hostpublic = '192.168.18.208';
+  static const String hostpublic = '10.11.4.203';
 
-  static const String baseUAS = "http://$host:5000";
+  static const String baseUAS = "http://$hostpublic:5000";
 
   //Ruangan
   static const String ruanganRead = "$baseUAS/api/v1/ruangan/read";

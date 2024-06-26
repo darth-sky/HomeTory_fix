@@ -83,22 +83,18 @@ class _AddContainerState extends State<AddContainer> {
   }
 
   Future<void> _postDataWithImage(BuildContext context, int idUser) async {
-    if (galleryFile == null) {
-      return; // Handle case where no image is selected
-    }
-
     var request =
         MultipartRequest('POST', Uri.parse(Endpoints.containerCreate));
-    debugPrint(idUser.toString());
-    debugPrint(galleryFile!.path.toString());
     request.fields['id_ruangan'] = idUser.toString();
     request.fields['nama_container'] = _containerController.text;
 
-    var multipartFile = await MultipartFile.fromPath(
-      'gambar_container',
-      galleryFile!.path,
-    );
-    request.files.add(multipartFile);
+    if (galleryFile != null) {
+      var multipartFile = await MultipartFile.fromPath(
+        'gambar_container',
+        galleryFile!.path,
+      );
+      request.files.add(multipartFile);
+    }
 
     request.send().then((response) {
       // Handle response (success or error)
@@ -125,27 +121,18 @@ class _AddContainerState extends State<AddContainer> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "Tambah Container dalam Ruangan",
-                  style: GoogleFonts.poppins(
-                    fontSize: 28,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
                 ),
-                const SizedBox(height: 2),
+                SizedBox(height: 2),
                 Text(
                   "Isi Form Container untuk menambah container dalam ruangan!",
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                  ),
+                  
                 ),
               ],
             ),
@@ -186,24 +173,19 @@ class _AddContainerState extends State<AddContainer> {
                               width: double.infinity,
                               height: 150,
                               child: galleryFile == null
-                                  ? Center(
+                                  ? const Center(
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          const Icon(
+                                          Icon(
                                             Icons.add_photo_alternate_outlined,
                                             color: Colors.grey,
                                             size: 50,
                                           ),
                                           Text(
                                             'Pick your Image here',
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 14,
-                                              color: const Color.fromARGB(
-                                                  255, 124, 122, 122),
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                            
                                           ),
                                         ],
                                       ),

@@ -88,14 +88,10 @@ class _AddBarangContainerState extends State<AddBarangContainer> {
   }
 
   Future<void> _postDataWithImage(BuildContext context, int idUser) async {
-    if (galleryFile == null) {
-      return; // Handle case where no image is selected
-    }
-
     var request =
         MultipartRequest('POST', Uri.parse(Endpoints.barangDlmContainerCreate));
     debugPrint(idUser.toString());
-    debugPrint(galleryFile!.path.toString());
+
     request.fields['id_container'] = idUser.toString();
     request.fields['nama_barang_dlm_container'] = _BarangController.text;
     request.fields['desc_barang_dlm_container'] = _descItemController.text;
@@ -103,19 +99,22 @@ class _AddBarangContainerState extends State<AddBarangContainer> {
     request.fields['category_barang_dlm_container'] =
         _selectedCategory; // Add selected category
 
-    var multipartFile = await MultipartFile.fromPath(
-      'gambar_barang_dlm_container',
-      galleryFile!.path,
-    );
-    request.files.add(multipartFile);
+    if (galleryFile != null) {
+      var multipartFile = await MultipartFile.fromPath(
+        'gambar_barang_dlm_container',
+        galleryFile!.path,
+      );
+      request.files.add(multipartFile);
+    }
 
     request.send().then((response) {
       // Handle response (success or error)
       if (response.statusCode == 201) {
         debugPrint('Data and image posted successfully!');
-        context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit(1, "", widget.idInsideContainer, 1);
+        final idPengguna = context.read<AuthCubit>().state.idPengguna;
+        context.read<BarangDlmContainerCubit>().fetchBarangDlmContainerCubit(
+            1, "", widget.idInsideContainer, idPengguna!);
         Navigator.pop(context);
-        // Navigator.pushReplacementNamed(context, '/home-screen');
       } else {
         debugPrint('Error posting data: ${response.statusCode}');
       }

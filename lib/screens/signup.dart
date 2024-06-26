@@ -22,61 +22,61 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   void sendSignUp() async {
-  final email = _nameController.text;
-  final password = _passwordController.text;
-  debugPrint(email);
-  debugPrint(password);
-  final response = await DataService.sendSignUpData(email, password);
-  debugPrint(response.statusCode.toString());
+    final email = _nameController.text;
+    final password = _passwordController.text;
+    debugPrint(email);
+    debugPrint(password);
+    final response = await DataService.sendSignUpData(email, password);
+    debugPrint(response.statusCode.toString());
 
-  if (response.statusCode == 201) {
-    debugPrint("sending success");
-    Navigator.pushReplacement(context, MaterialPageRoute(
-      builder: (context) {
-        return const LoginPage();
-      },
-    ));
-  } else if (response.statusCode == 409) {
-    debugPrint("username already exists");
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Registration Failed'),
-          content: const Text('Username already exists. Please choose a different username.'),
-          actions: [
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  } else {
-    debugPrint("failed not cannot sign up");
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Registration Failed'),
-          content: const Text('An error occurred. Please try again.'),
-          actions: [
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+    if (response.statusCode == 201) {
+      debugPrint("sending success");
+      Navigator.pushReplacement(context, MaterialPageRoute(
+        builder: (context) {
+          return const LoginPage();
+        },
+      ));
+    } else if (response.statusCode == 409) {
+      debugPrint("username already exists");
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Registration Failed'),
+            content: const Text(
+                'Username already exists. Please choose a different username.'),
+            actions: [
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      debugPrint("failed not cannot sign up");
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Registration Failed'),
+            content: const Text('An error occurred. Please try again.'),
+            actions: [
+              TextButton(
+                child: const Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
-}
-
 
   void signUserUp() {}
 
@@ -84,10 +84,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: const Text('HomeTory'),
-        // backgroundColor: Colors.blueGrey,
-      ),
+      // appBar: AppBar(
+      //   title: const Text('HomeTory'),
+      //   // backgroundColor: Colors.blueGrey,
+      // ),
       body: SafeArea(
         child: Center(
           child: Stack(
@@ -95,7 +95,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               Container(
                 decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/images/background.png'),
+                    image: AssetImage('assets/images/bg 2.jpg'),
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -203,11 +203,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           padding: const EdgeInsets.symmetric(horizontal: 10.0),
                           child: GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const LoginPage()),
-                              );
+                              // Navigator.push(
+                              //   context,
+                              //   MaterialPageRoute(
+                              //       builder: (context) => const LoginPage()),
+                              // );
+                              Navigator.pop(context);
                             },
                             child: const Text(
                               'Sudah Punya Akun? LOG IN',

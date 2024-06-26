@@ -19,11 +19,11 @@ class _KonfirmasiProState extends State<KonfirmasiPro> {
     if (roles != 'pro') {
       final Response = await DataService.sendUpdateRole(idPengguna!);
       if (Response.statusCode == 200) {
-        authCubit.becomePro(idPengguna!);
+        authCubit.becomePro();
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('Anda telah berhasil meng-upgrade ke akun Pro!')));
       } else {
-        debugPrint('gagal ${Response.statusCode}');
+        debugPrint('gagal karena ${Response.statusCode}');
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -39,82 +39,90 @@ class _KonfirmasiProState extends State<KonfirmasiPro> {
         title: const Text('Konfirmasi Upgrade ke Pro'),
         backgroundColor: Colors.blueGrey,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Upgrade ke Pro',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Dengan meng-upgrade ke akun Pro, Anda akan mendapatkan fitur-fitur eksklusif seperti:',
-              style: TextStyle(
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              '- Akses tak terbatas ke semua konten\n'
-              '- Bebas iklan\n'
-              '- Dukungan pelanggan prioritas\n'
-              '- Dan banyak lagi...',
-              style: TextStyle(
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'Apakah Anda yakin ingin meng-upgrade ke akun Pro?',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 32),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    // Logika untuk konfirmasi upgrade
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: const Text('Konfirmasi'),
-                          content: const Text(
-                              'Apakah Anda yakin ingin meng-upgrade ke akun Pro?'),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Batal'),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                // Logika untuk upgrade
-                                _becomePro(authCubit);
-                                Navigator.of(context).pop();
-                              },
-                              child: const Text('Ya'),
-                            ),
-                          ],
-                        );
-                      },
-                    );
-                  },
-                  child: const Text('Upgrade Sekarang'),
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/bg 2.jpg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Upgrade ke Pro',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
                 ),
-              ],
-            ),
-          ],
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Dengan meng-upgrade ke akun Pro, Anda akan mendapatkan fitur-fitur eksklusif seperti:',
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                '- Akses tak terbatas ke semua konten\n'
+                '- Bebas iklan\n'
+                '- Dukungan pelanggan prioritas\n'
+                '- Dan banyak lagi...',
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Apakah Anda yakin ingin meng-upgrade ke akun Pro?',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 32),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      // Logika untuk konfirmasi upgrade
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Konfirmasi'),
+                            content: const Text(
+                                'Apakah Anda yakin ingin meng-upgrade ke akun Pro?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Batal'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  // Logika untuk upgrade
+                                  _becomePro(authCubit);
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Ya'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: const Text('Upgrade Sekarang'),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

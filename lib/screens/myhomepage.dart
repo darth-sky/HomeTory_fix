@@ -82,7 +82,7 @@ class _MyhomepageState extends State<Myhomepage> {
                 ),
                 ListTile(
                   leading: const Icon(Icons.card_giftcard),
-                  title: const Text('Want to go premium?'),
+                  title: const Text('Want to be a pro user?'),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -132,7 +132,8 @@ class _MyhomepageState extends State<Myhomepage> {
                 FutureBuilder<List<Pengguna>>(
                   future: _pengguna,
                   builder: (context, snapshot) {
-                final idPengguna = context.read<AuthCubit>().state.idPengguna;
+                    final idPengguna =
+                        context.read<AuthCubit>().state.idPengguna;
                     if (snapshot.hasData) {
                       final data = snapshot.data!;
                       return Container(
@@ -143,14 +144,16 @@ class _MyhomepageState extends State<Myhomepage> {
                           itemBuilder: (context, index) {
                             final item = data[index];
                             return ListTile(
-                              leading: const Icon(Icons.card_giftcard),
-                              title: const Text('google map'),
+                              leading: const Icon(Icons.home_work),
+                              title: const Text('Status Properti'),
                               onTap: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        GoogleMapPage(user: item, idPengguna: idPengguna!,),
+                                    builder: (context) => GoogleMapPage(
+                                      user: item,
+                                      idPengguna: idPengguna!,
+                                    ),
                                   ),
                                 );
                               },
@@ -202,7 +205,8 @@ class _MyhomepageState extends State<Myhomepage> {
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blueGrey,
-        unselectedItemColor: Colors.blueGrey,
+        unselectedItemColor: Colors.black54,
+        // backgroundColor: Colors.black,
         type: _bottomNavType,
         onTap: _onItemTapped,
         items: _navBarItems,

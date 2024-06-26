@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart'; // Import library untuk LengthLimitingTextInputFormatter
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
@@ -19,6 +20,7 @@ class AddRuangan extends StatefulWidget {
 class _AddRuanganState extends State<AddRuangan> {
   final _ruanganController = TextEditingController();
   String _title = "";
+  int _characterCount = 0; // Variable untuk menyimpan jumlah karakter
 
   File? galleryFile;
   final picker = ImagePicker();
@@ -77,22 +79,19 @@ class _AddRuanganState extends State<AddRuangan> {
   }
 
   Future<void> _postDataWithImage(BuildContext context, int idUser) async {
-    if (galleryFile == null) {
-      return; // Handle case where no image is selected
-    }
-
     var request = MultipartRequest('POST', Uri.parse(Endpoints.ruanganCreate));
     debugPrint(idUser.toString());
-    debugPrint(galleryFile!.path.toString());
     debugPrint(_ruanganController.text);
     request.fields['id_pengguna'] = idUser.toString();
     request.fields['nama_ruangan'] = _ruanganController.text;
 
-    var multipartFile = await MultipartFile.fromPath(
-      'gambar_ruangan',
-      galleryFile!.path,
-    );
-    request.files.add(multipartFile);
+    if (galleryFile != null) {
+      var multipartFile = await MultipartFile.fromPath(
+        'gambar_ruangan',
+        galleryFile!.path,
+      );
+      request.files.add(multipartFile);
+    }
 
     request.send().then((response) {
       // Handle response (success or error)
@@ -108,6 +107,7 @@ class _AddRuanganState extends State<AddRuangan> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: Colors.blueGrey,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -124,20 +124,20 @@ class _AddRuanganState extends State<AddRuangan> {
               children: [
                 Text(
                   "Tambah Ruangan",
-                  style: GoogleFonts.poppins(
-                    fontSize: 32,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w700,
-                  ),
+                  // style: GoogleFonts.poppins(
+                  //   fontSize: 32,
+                  //   color: Colors.white,
+                  //   fontWeight: FontWeight.w700,
+                  // ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   "Isi Form Ruangan untuk menambah ruangan!",
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                  ),
+                  // style: GoogleFonts.poppins(
+                  //   fontSize: 12,
+                  //   color: Colors.black,
+                  //   fontWeight: FontWeight.normal,
+                  // ),
                 ),
               ],
             ),
@@ -190,12 +190,12 @@ class _AddRuanganState extends State<AddRuangan> {
                                           ),
                                           Text(
                                             'Pick your Image here',
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 14,
-                                              color: const Color.fromARGB(
-                                                  255, 124, 122, 122),
-                                              fontWeight: FontWeight.w500,
-                                            ),
+                                            // style: GoogleFonts.poppins(
+                                            //   fontSize: 14,
+                                            //   color: const Color.fromARGB(
+                                            //       255, 124, 122, 122),
+                                            //   fontWeight: FontWeight.w500,
+                                            // ),
                                           ),
                                         ],
                                       ),
@@ -211,18 +211,34 @@ class _AddRuanganState extends State<AddRuangan> {
                               border: Border(
                                   bottom: BorderSide(color: Colors.black)),
                             ),
-                            child: TextField(
-                              controller: _ruanganController,
-                              decoration: const InputDecoration(
-                                hintText: "Nama Ruangan",
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: InputBorder.none,
-                              ),
-                              onChanged: (value) {
-                                setState(() {
-                                  _title = value;
-                                });
-                              },
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                TextField(
+                                  controller: _ruanganController,
+                                  inputFormatters: [
+                                    LengthLimitingTextInputFormatter(14),
+                                  ],
+                                  decoration: const InputDecoration(
+                                    hintText: "Nama Ruangan (max 14 karakter)",
+                                    hintStyle: TextStyle(color: Colors.grey),
+                                    border: InputBorder.none,
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _title = value;
+                                      _characterCount = value.length;
+                                    });
+                                  },
+                                ),
+                                Text(
+                                  '$_characterCount/14',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           const SizedBox(height: 10),

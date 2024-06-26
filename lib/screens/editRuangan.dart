@@ -79,7 +79,7 @@ class _EditRuanganState extends State<EditRuangan> {
 
   Future<void> _updateDataWithImage(BuildContext context) async {
     try {
-      var request = http.MultipartRequest('POST',
+      var request = http.MultipartRequest('PUT',
           Uri.parse('${Endpoints.ruanganUpdate}/${widget.ruangan.id_ruangan}'));
       request.fields['id_ruangan'] = widget.ruangan.id_ruangan.toString();
       request.fields['nama_ruangan'] = _titleController.text;

@@ -21,7 +21,22 @@ class AuthCubit extends Cubit<AuthState> {
         isLoggedIn: false, accessToken: "", idPengguna: 1, roles: "biasa", username: ""));
   }
 
-  void becomePro(int id_pengguna) {
-    emit( AuthState(isLoggedIn: true, accessToken: '', idPengguna: id_pengguna, roles: 'pro', username: ""));
+  // void becomePro(int id_pengguna) {
+  //   emit( AuthState(isLoggedIn: true, accessToken: '', idPengguna: id_pengguna, roles: 'pro', username: ""));
+  // }
+  void becomePro() {
+    emit(state.copyWith(roles: 'pro'));
+  }
+}
+
+extension AuthStateCopyWith on AuthState {
+  AuthState copyWith({bool? isLoggedIn, String? accessToken, int? idPengguna, String? roles, String? username}) {
+    return AuthState(
+      isLoggedIn: isLoggedIn ?? this.isLoggedIn,
+      accessToken: accessToken ?? this.accessToken,
+      idPengguna: idPengguna ?? this.idPengguna,
+      roles: roles ?? this.roles,
+      username: username ?? this.username,
+    );
   }
 }

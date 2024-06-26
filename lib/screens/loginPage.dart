@@ -68,10 +68,10 @@ class _LoginPageState extends State<LoginPage> {
     final authCubit = BlocProvider.of<AuthCubit>(context);
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        title: const Text('HomeTory'),
-        // backgroundColor: Colors.blueGrey,
-      ),
+      // appBar: AppBar(
+      //   title: const Text('HomeTory'),
+      //   // backgroundColor: Colors.blueGrey,
+      // ),
       body: SafeArea(
         child: Center(
           child: Stack(
@@ -79,7 +79,7 @@ class _LoginPageState extends State<LoginPage> {
               Container(
                 decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/images/background.png'),
+                    image: AssetImage('assets/images/bg 2.jpg'),
                     fit: BoxFit.cover,
                   ),
                 ),

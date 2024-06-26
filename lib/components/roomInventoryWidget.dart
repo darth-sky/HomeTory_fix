@@ -17,51 +17,59 @@ class RoomInventoryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 350,
-      height: 290,
-      margin: const EdgeInsets.all(18),
+      width: 190,
+      // Removed the fixed height
+      margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.blueGrey[100],
-        borderRadius: BorderRadius.circular(10),
+        color: Colors.white70,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 5,
+            blurRadius: 7,
+            offset: Offset(0, 3),
+          ),
+        ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize
+            .min, // Ensures the column takes up only as much space as needed
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            width: 300,
-            height: 150,
+            width: 100,
+            height: 100,
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: image.image,
-                fit: BoxFit.fitHeight,
+                // fit: BoxFit.cover,
               ),
               borderRadius: BorderRadius.circular(10),
             ),
           ),
+          // const SizedBox(height: 18),
           Text(
             roomName,
             style: const TextStyle(
-              fontSize: 20,
+              fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(
-            height: 35,
-            child: ListTile(
-              leading: const Icon(Icons.storage),
-              title: Text(
-                'Jumlah Container: $containerCount',
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+          const SizedBox(height: 5),
+          Text(
+            'Jumlah Container: $containerCount',
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.category),
-            title: Text(
-              'Jumlah Barang: $itemCount',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Text(
+            'Jumlah Barang: $itemCount',
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.grey,
             ),
           ),
         ],

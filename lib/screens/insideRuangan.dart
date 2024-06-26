@@ -36,7 +36,7 @@ class _InsideRuanganState extends State<InsideRuangan> {
     await DataService.deleteRuangan(ruanganHapus);
     context.read<RuanganCubit>().fetchRuanganCubit();
     Navigator.pop(context);
-    Navigator.pop(context);
+    // Navigator.pop(context);
     // if(response.sta)
   }
 
@@ -47,16 +47,14 @@ class _InsideRuanganState extends State<InsideRuangan> {
     context.read<RuanganCubit>().fetchRuanganCubit();
     context.read<ContainersCubit>().fetchContainersCubit();
     final idPengguna = context.read<AuthCubit>().state.idPengguna;
-    context
-        .read<BarangDlmRuanganCubit>()
-        .fetchBarangDlmRuanganCubit(currentPage, "", widget.idInsideRuangan, idPengguna!);
+    context.read<BarangDlmRuanganCubit>().fetchBarangDlmRuanganCubit(
+        currentPage, "", widget.idInsideRuangan, idPengguna!);
   }
 
   void _fetchData() {
     final idPengguna = context.read<AuthCubit>().state.idPengguna;
-    context
-        .read<BarangDlmRuanganCubit>()
-        .fetchBarangDlmRuanganCubit(currentPage, "", widget.idInsideRuangan, idPengguna!);
+    context.read<BarangDlmRuanganCubit>().fetchBarangDlmRuanganCubit(
+        currentPage, "", widget.idInsideRuangan, idPengguna!);
   }
 
   void _incrementPage() {
@@ -121,7 +119,7 @@ class _InsideRuanganState extends State<InsideRuangan> {
                 filterRuangan = state.ListOfRuangan.firstWhere(
                     (element) => element.id_ruangan == idRuangan);
               } else {
-                return SizedBox();
+                return const SizedBox();
               }
               return IconButton(
                   onPressed: () {
@@ -149,6 +147,8 @@ class _InsideRuanganState extends State<InsideRuangan> {
             imageUrl = Uri.parse(
                     '${Endpoints.baseUAS}/static/img/${filterRuangan.gambar_ruangan}')
                 .toString();
+          } else {
+            return const SizedBox();
           }
           return Container(
             decoration: const BoxDecoration(
@@ -179,8 +179,12 @@ class _InsideRuanganState extends State<InsideRuangan> {
                     // Text(filterRuangan!.nama_ruangan)
                   ],
                 ),
-                const SizedBox(
-                  height: 10,
+                Text(
+                  filterRuangan?.nama_ruangan ?? 'no name',
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Expanded(
                   child: DefaultTabController(

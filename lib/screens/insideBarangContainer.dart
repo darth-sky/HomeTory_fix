@@ -42,7 +42,7 @@ class _InsideBarangDlmContainerState extends State<InsideBarangDlmContainer> {
     debugPrint(widget.idInsideBarangDlmContainer.toString());
     debugPrint(widget.idContainer.toString());
     debugPrint('ini currentpages ${widget.currentPages.toString()}');
-    
+
     context.read<RuanganCubit>().fetchRuanganCubit();
     context.read<ContainersCubit>().fetchContainersCubit();
     final idPengguna = context.read<AuthCubit>().state.idPengguna;
