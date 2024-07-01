@@ -1,25 +1,68 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hometory/components/constants.dart';
-import 'package:hometory/components/my_TextField.dart';
-import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
-import 'package:hometory/dto/login.dart';
-import 'package:hometory/screens/loginPage.dart';
+import 'package:hometory/components/my_text_field.dart';
+import 'package:hometory/screens/login_page.dart';
 import 'package:hometory/services/data_services.dart';
-import 'package:hometory/utils/secure_storage_util.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({Key? key}) : super(key: key);
+  const SignUpScreen({super.key});
 
   @override
-  _SignUpScreenState createState() => _SignUpScreenState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  void alreadyExist() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Registration Failed'),
+          content: const Text(
+              'Username already exists. Please choose a different username.'),
+          actions: [
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void cannotSignUp() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Registration Failed'),
+          content: const Text('An error occurred. Please try again.'),
+          actions: [
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void push() {
+    Navigator.pushReplacement(context, MaterialPageRoute(
+      builder: (context) {
+        return const LoginPage();
+      },
+    ));
+  }
 
   void sendSignUp() async {
     final email = _nameController.text;
@@ -31,50 +74,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
     if (response.statusCode == 201) {
       debugPrint("sending success");
-      Navigator.pushReplacement(context, MaterialPageRoute(
-        builder: (context) {
-          return const LoginPage();
-        },
-      ));
+      push();
     } else if (response.statusCode == 409) {
       debugPrint("username already exists");
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Registration Failed'),
-            content: const Text(
-                'Username already exists. Please choose a different username.'),
-            actions: [
-              TextButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
+      alreadyExist();
     } else {
       debugPrint("failed not cannot sign up");
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Registration Failed'),
-            content: const Text('An error occurred. Please try again.'),
-            actions: [
-              TextButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
     }
   }
 

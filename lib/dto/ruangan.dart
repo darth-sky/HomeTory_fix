@@ -1,20 +1,20 @@
 class Ruangan {
-  final int id_ruangan;
-  final int id_pengguna;
-  final String nama_ruangan;
-  final String gambar_ruangan;
+  final int idRuangan;
+  final int idPengguna;
+  final String namaRuangan;
+  final String gambarRuangan;
 
   Ruangan(
-      {required this.id_ruangan,
-      required this.id_pengguna,
-      required this.nama_ruangan,
-      required this.gambar_ruangan,
+      {required this.idRuangan,
+      required this.idPengguna,
+      required this.namaRuangan,
+      required this.gambarRuangan,
       
       });
 
   factory Ruangan.fromJson(Map<String, dynamic> json) => Ruangan(
-      id_ruangan: json['id_ruangan'] as int,
-      id_pengguna: json['id_pengguna'] as int,
-      nama_ruangan: json['nama_ruangan'] as String,
-      gambar_ruangan: json['gambar_ruangan'] as String);
+      idRuangan: json['id_ruangan'] as int,
+      idPengguna: json['id_pengguna'] as int,
+      namaRuangan: json['nama_ruangan'] as String,
+      gambarRuangan: json['gambar_ruangan'] as String);
 }

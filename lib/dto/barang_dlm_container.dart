@@ -1,31 +1,31 @@
-class Barang_dlm_container {
-  final int id_barang_dlm_container;
-  final int id_container;
-  final String nama_barang_dlm_container;
-  final String desc_barang_dlm_container;
-  final int qnty_barang_dlm_container;
-  final String gambar_barang_dlm_container;
-  final String category_barang_dlm_container;
+class BarangDlmContainer {
+  final int idBarangDlmContainer;
+  final int idContainer;
+  final String namaBarangDlmContainer;
+  final String descBarangDlmContainer;
+  final int qntyBarangDlmContainer;
+  final String gambarBarangDlmContainer;
+  final String categoryBarangDlmContainer;
 
-  Barang_dlm_container(
-      {required this.id_barang_dlm_container,
-      required this.id_container,
-      required this.nama_barang_dlm_container,
-      required this.desc_barang_dlm_container,
-      required this.qnty_barang_dlm_container,
-      required this.gambar_barang_dlm_container,
-      required this.category_barang_dlm_container});
+  BarangDlmContainer(
+      {required this.idBarangDlmContainer,
+      required this.idContainer,
+      required this.namaBarangDlmContainer,
+      required this.descBarangDlmContainer,
+      required this.qntyBarangDlmContainer,
+      required this.gambarBarangDlmContainer,
+      required this.categoryBarangDlmContainer});
 
-  factory Barang_dlm_container.fromJson(Map<String, dynamic> json) =>
-      Barang_dlm_container(
-        id_barang_dlm_container: json['id_barang_dlm_container'] as int,
-        id_container: json['id_container'] as int,
-        nama_barang_dlm_container: json['nama_barang_dlm_container'] as String,
-        desc_barang_dlm_container: json['desc_barang_dlm_container'] as String,
-        qnty_barang_dlm_container: json['qnty_barang_dlm_container'] as int,
-        gambar_barang_dlm_container:
+  factory BarangDlmContainer.fromJson(Map<String, dynamic> json) =>
+      BarangDlmContainer(
+        idBarangDlmContainer: json['id_barang_dlm_container'] as int,
+        idContainer: json['id_container'] as int,
+        namaBarangDlmContainer: json['nama_barang_dlm_container'] as String,
+        descBarangDlmContainer: json['desc_barang_dlm_container'] as String,
+        qntyBarangDlmContainer: json['qnty_barang_dlm_container'] as int,
+        gambarBarangDlmContainer:
             json['gambar_barang_dlm_container'] as String,
-        category_barang_dlm_container:
+        categoryBarangDlmContainer:
             json['category_barang_dlm_container'] as String,
       );
 }

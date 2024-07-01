@@ -2,17 +2,17 @@ part of 'containers_cubit.dart';
 
 @immutable
 class ContainersState {
-  const ContainersState({required this.ListOfContainers});
-  final List<Containers> ListOfContainers;
+  const ContainersState({required this.listOfContainers});
+  final List<Containers> listOfContainers;
 }
 
 final class ContainersInitial extends ContainersState {
   ContainersInitial()
-      : super(ListOfContainers: [
+      : super(listOfContainers: [
           Containers(
-              id_containers: 1,
-              id_ruangan: 1,
-              nama_containers: 'default',
-              gambar_containers: 'pfp.jpg')
+              idContainer: 1,
+              idRuangan: 1,
+              namaContainer: 'default',
+              gambarContainer: 'pfp.jpg')
         ]);
 }

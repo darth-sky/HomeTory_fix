@@ -2,17 +2,17 @@ part of 'ruangan_cubit.dart';
 
 @immutable
 class RuanganState {
-  const RuanganState({required this.ListOfRuangan});
-  final List<Ruangan> ListOfRuangan;
+  const RuanganState({required this.listOfRuangan});
+  final List<Ruangan> listOfRuangan;
 }
 
 final class RuanganInitial extends RuanganState {
   RuanganInitial()
-      : super(ListOfRuangan: [
+      : super(listOfRuangan: [
           Ruangan(
-              id_ruangan: 1,
-              id_pengguna: 1,
-              nama_ruangan: 'kamar',
-              gambar_ruangan: 'pfp.jpg')
+              idRuangan: 1,
+              idPengguna: 1,
+              namaRuangan: 'kamar',
+              gambarRuangan: 'pfp.jpg')
         ]);
 }

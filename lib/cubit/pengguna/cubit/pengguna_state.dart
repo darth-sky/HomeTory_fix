@@ -10,10 +10,10 @@ final class PenggunaInitial extends PenggunaState {
   PenggunaInitial()
       : super(listOfPengguna: [
           Pengguna(
-              id_pengguna: 1,
+              idPengguna: 1,
               username: 'Test User',
               role: 'biasa',
-              foto_profil: 'pfp.jpg',
+              fotoProfil: 'pfp.jpg',
               email: 'user@gmail.com',
               longtitude: 0,
               latitude: 0,

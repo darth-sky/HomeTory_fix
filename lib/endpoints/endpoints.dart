@@ -1,68 +1,142 @@
+import 'package:hometory/utils/secure_storage_util.dart';
+
 class Endpoints {
-  // UAS
-  static const String host = "10.0.2.2";
-  static const String hostpublic = '10.11.4.203';
+  static late String baseUAS;
+  
+  // Panggil metode ini selama inisialisasi aplikasi
+  static Future<void> initialize() async {
+    final urlInput = await SecureStorageUtil.storage.read(key: 'url_setting');
+    baseUAS = urlInput ?? "default_url_if_not_found";
+  }
 
-  static const String baseUAS = "http://$hostpublic:5000";
-
-  //Ruangan
-  static const String ruanganRead = "$baseUAS/api/v1/ruangan/read";
-  static const String ruanganCreate = "$baseUAS/api/v1/ruangan/create";
-  static const String ruanganDelete = "$baseUAS/api/v1/ruangan/delete";
-  static const String ruanganUpdate = "$baseUAS/api/v1/ruangan/update";
+    //Ruangan
+  static  String get ruanganRead => "$baseUAS/api/v1/ruangan/read";
+  static String get ruanganCreate => "$baseUAS/api/v1/ruangan/create";
+  static String get ruanganDelete => "$baseUAS/api/v1/ruangan/delete";
+  static String get ruanganUpdate => "$baseUAS/api/v1/ruangan/update";
 
   // Containers
-  static const String containerRead = "$baseUAS/api/v1/container/read";
-  static const String containerCreate = "$baseUAS/api/v1/container/create";
-  static const String containerDelete = "$baseUAS/api/v1/container/delete";
-  static const String containerUpdate = "$baseUAS/api/v1/container/update";
+  static String get containerRead => "$baseUAS/api/v1/container/read";
+  static String get containerCreate => "$baseUAS/api/v1/container/create";
+  static String get containerDelete => "$baseUAS/api/v1/container/delete";
+  static String get containerUpdate => "$baseUAS/api/v1/container/update";
 
   // barang dalam ruangan
-  static const String barangDlmRuanganRead =
+  static String get barangDlmRuanganRead =>
       "$baseUAS/api/v1/barang_dlm_ruangan/read";
-  static const String barangDlmRuanganReadAll =
+  static String get barangDlmRuanganReadAll =>
       "$baseUAS/api/v1/barang_dlm_ruangan/readAll";
-  static const String barangDlmRuanganCreate =
+  static String get barangDlmRuanganCreate =>
       "$baseUAS/api/v1/barang_dlm_ruangan/create";
-  static const String barangDlmRuanganDelete =
+  static String get barangDlmRuanganDelete =>
       "$baseUAS/api/v1/barang_dlm_ruangan/delete";
-  static const String barangDlmRuanganUpdate =
+  static String get barangDlmRuanganUpdate =>
       "$baseUAS/api/v1/barang_dlm_ruangan/update";
-  static const String barangDlmRuanganByUser =
+  static String get barangDlmRuanganByUser =>
       "$baseUAS/api/v1/barang_dlm_ruangan/readByUser";
-  static const String barangDlmRuanganLocation =
+  static String get barangDlmRuanganLocation =>
       "$baseUAS/api/v1/barang_dlm_ruangan/readTotalBarang";
 
   // barang dalam container
-  static const String barangDlmContainerRead =
+  static String get barangDlmContainerRead =>
       "$baseUAS/api/v1/barang_dlm_container/read";
-  static const String barangDlmContainerReadAll =
+  static String get barangDlmContainerReadAll =>
       "$baseUAS/api/v1/barang_dlm_container/readAll";
-  static const String barangDlmContainerCreate =
+  static String get barangDlmContainerCreate =>
       "$baseUAS/api/v1/barang_dlm_container/create";
-  static const String barangDlmContainerDelete =
+  static String get barangDlmContainerDelete =>
       "$baseUAS/api/v1/barang_dlm_container/delete";
-  static const String barangDlmContainerUpdate =
+  static String get barangDlmContainerUpdate =>
       "$baseUAS/api/v1/barang_dlm_container/update";
-  static const String barangDlmContainerByUser =
+  static String get barangDlmContainerByUser =>
       "$baseUAS/api/v1/barang_dlm_container/readByUserContainer";
-  static const String barangDlmContainerLocation =
+  static String get barangDlmContainerLocation =>
       "$baseUAS/api/v1/barang_dlm_container/readTotalBarangContainer";
 
   // auth
-  static const String login = "$baseUAS/api/v1/auth/login";
-  static const String SignUp = "$baseUAS/api/v1/auth/register";
+  static String get login => "$baseUAS/api/v1/auth/login";
+  static String get signUp => "$baseUAS/api/v1/auth/register";
 
   // role
-  static const String updateRole = "$baseUAS/api/v1/pengguna/updateRole";
+  static String get updateRole => "$baseUAS/api/v1/pengguna/updateRole";
 
   // user
-  static const String userRead = "$baseUAS/api/v1/pengguna/read";
-  static const String userReadId = "$baseUAS/api/v1/pengguna/readByIdUser";
-  static const String userUpdate = "$baseUAS/api/v1/pengguna/update";
-  static const String userRuangan = "$baseUAS/api/v1/pengguna/userReadRuangan";
-  static const String userBrgContainer =
+  static String get userRead => "$baseUAS/api/v1/pengguna/read";
+  static String get userReadId => "$baseUAS/api/v1/pengguna/readByIdUser";
+  static String get userUpdate => "$baseUAS/api/v1/pengguna/update";
+  static String get userRuangan => "$baseUAS/api/v1/pengguna/userReadRuangan";
+  static String get userBrgContainer =>
       "$baseUAS/api/v1/pengguna/userReadBrgContainer";
-  static const String userBrgRuangan =
+  static String get userBrgRuangan =>
       "$baseUAS/api/v1/pengguna/userReadBrgRuangan";
+
 }
+
+// class Endpoints {
+//   // UAS
+//   static String get host => "10.0.2.2";
+//   static String get hostpublic => '10.23.2.28';
+
+//   static String get baseUAS => "http://$hostpublic:5000";
+
+//   //Ruangan
+//   static String get ruanganRead => "$baseUAS/api/v1/ruangan/read";
+//   static String get ruanganCreate => "$baseUAS/api/v1/ruangan/create";
+//   static String get ruanganDelete => "$baseUAS/api/v1/ruangan/delete";
+//   static String get ruanganUpdate => "$baseUAS/api/v1/ruangan/update";
+
+//   // Containers
+//   static String get containerRead => "$baseUAS/api/v1/container/read";
+//   static String get containerCreate => "$baseUAS/api/v1/container/create";
+//   static String get containerDelete => "$baseUAS/api/v1/container/delete";
+//   static String get containerUpdate => "$baseUAS/api/v1/container/update";
+
+//   // barang dalam ruangan
+//   static String get barangDlmRuanganRead =>
+//       "$baseUAS/api/v1/barang_dlm_ruangan/read";
+//   static String get barangDlmRuanganReadAll =>
+//       "$baseUAS/api/v1/barang_dlm_ruangan/readAll";
+//   static String get barangDlmRuanganCreate =>
+//       "$baseUAS/api/v1/barang_dlm_ruangan/create";
+//   static String get barangDlmRuanganDelete =>
+//       "$baseUAS/api/v1/barang_dlm_ruangan/delete";
+//   static String get barangDlmRuanganUpdate =>
+//       "$baseUAS/api/v1/barang_dlm_ruangan/update";
+//   static String get barangDlmRuanganByUser =>
+//       "$baseUAS/api/v1/barang_dlm_ruangan/readByUser";
+//   static String get barangDlmRuanganLocation =>
+//       "$baseUAS/api/v1/barang_dlm_ruangan/readTotalBarang";
+
+//   // barang dalam container
+//   static String get barangDlmContainerRead =>
+//       "$baseUAS/api/v1/barang_dlm_container/read";
+//   static String get barangDlmContainerReadAll =>
+//       "$baseUAS/api/v1/barang_dlm_container/readAll";
+//   static String get barangDlmContainerCreate =>
+//       "$baseUAS/api/v1/barang_dlm_container/create";
+//   static String get barangDlmContainerDelete =>
+//       "$baseUAS/api/v1/barang_dlm_container/delete";
+//   static String get barangDlmContainerUpdate =>
+//       "$baseUAS/api/v1/barang_dlm_container/update";
+//   static String get barangDlmContainerByUser =>
+//       "$baseUAS/api/v1/barang_dlm_container/readByUserContainer";
+//   static String get barangDlmContainerLocation =>
+//       "$baseUAS/api/v1/barang_dlm_container/readTotalBarangContainer";
+
+//   // auth
+//   static String get login => "$baseUAS/api/v1/auth/login";
+//   static String get signUp => "$baseUAS/api/v1/auth/register";
+
+//   // role
+//   static String get updateRole => "$baseUAS/api/v1/pengguna/updateRole";
+
+//   // user
+//   static String get userRead => "$baseUAS/api/v1/pengguna/read";
+//   static String get userReadId => "$baseUAS/api/v1/pengguna/readByIdUser";
+//   static String get userUpdate => "$baseUAS/api/v1/pengguna/update";
+//   static String get userRuangan => "$baseUAS/api/v1/pengguna/userReadRuangan";
+//   static String get userBrgContainer =>
+//       "$baseUAS/api/v1/pengguna/userReadBrgContainer";
+//   static String get userBrgRuangan =>
+//       "$baseUAS/api/v1/pengguna/userReadBrgRuangan";
+// }

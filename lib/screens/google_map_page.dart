@@ -2,29 +2,28 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:hometory/dto/pengguna.dart';
-import 'package:hometory/dto/totalBrgContainer.dart';
-import 'package:hometory/dto/totalBrgRuangan.dart';
-import 'package:hometory/dto/totalRuangan.dart';
+import 'package:hometory/dto/total_brg_container.dart';
+import 'package:hometory/dto/total_brg_ruangan.dart';
+import 'package:hometory/dto/total_ruangan.dart';
 import 'package:hometory/services/data_services.dart';
 
 class GoogleMapPage extends StatefulWidget {
   final Pengguna? user;
   final int idPengguna;
 
-  const GoogleMapPage({Key? key, required this.idPengguna, this.user})
-      : super(key: key);
+  const GoogleMapPage({super.key, required this.idPengguna, this.user});
 
   @override
-  _GoogleMapPageState createState() => _GoogleMapPageState();
+  State<GoogleMapPage> createState() => _GoogleMapPageState();
 }
 
 class _GoogleMapPageState extends State<GoogleMapPage> {
   static const LatLng googlePlex = LatLng(37.4223, -122.0848);
   late LatLng currentHome;
 
-  late Future<List<totalRuangan>> _totalRuangan;
-  late Future<List<totalBrgContainer>> _totalBrgContainer;
-  late Future<List<totalBrgRuangan>> _totalBrgRuangan;
+  late Future<List<TotalRuangan>> _totalRuangan;
+  late Future<List<TotalBrgContainer>> _totalBrgContainer;
+  late Future<List<TotalBrgRuangan>> _totalBrgRuangan;
 
   @override
   void initState() {
@@ -56,25 +55,6 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Expanded(
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(8.0),
-            //     child: ClipRRect(
-            //       borderRadius: BorderRadius.circular(15.0),
-            //       child: GoogleMap(
-            //         initialCameraPosition:
-            //             CameraPosition(target: currentHome, zoom: 13),
-            //         markers: {
-            //           Marker(
-            //             markerId: const MarkerId('currentHome'),
-            //             position: currentHome,
-            //             icon: BitmapDescriptor.defaultMarker,
-            //           ),
-            //         },
-            //       ),
-            //     ),
-            //   ),
-            // ),
             Expanded(
               child: GoogleMap(
                 initialCameraPosition:
@@ -88,14 +68,13 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
                 },
               ),
             ),
-
             _buildSection(
               title: 'Total Ruangan',
               future: _totalRuangan,
               itemBuilder: (context, index, item) {
                 return ListTile(
                   title: Text(
-                    'Jumlah Ruangan: ${item.jumlah_ruangan}',
+                    'Jumlah Ruangan: ${item.jumlahRuangan}',
                     style: const TextStyle(fontSize: 16.0, color: Colors.black),
                   ),
                   leading: const Icon(Icons.room, color: Colors.blueGrey),
@@ -108,7 +87,7 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
               itemBuilder: (context, index, item) {
                 return ListTile(
                   title: Text(
-                    'Jumlah Barang Container: ${item.jumlah_barang_container}',
+                    'Jumlah Barang Container: ${item.jumlahBarangContainer}',
                     style: const TextStyle(fontSize: 16.0, color: Colors.black),
                   ),
                   leading: const Icon(Icons.storage, color: Colors.blueGrey),
@@ -121,7 +100,7 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
               itemBuilder: (context, index, item) {
                 return ListTile(
                   title: Text(
-                    'Jumlah Barang Ruangan: ${item.jumlah_barang_ruangan}',
+                    'Jumlah Barang Ruangan: ${item.jumlahBarangRuangan}',
                     style: const TextStyle(fontSize: 16.0, color: Colors.black),
                   ),
                   leading: const Icon(Icons.home, color: Colors.blueGrey),
@@ -159,19 +138,23 @@ class _GoogleMapPageState extends State<GoogleMapPage> {
           FutureBuilder<List<dynamic>>(
             future: future,
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (snapshot.hasError) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("Error: ${snapshot.error}"),
+                );
+              } else if (snapshot.hasData) {
                 final data = snapshot.data!;
                 return ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: data.length,
-                  itemBuilder: (context, index) =>
-                      itemBuilder(context, index, data[index]),
-                );
-              } else if (snapshot.hasError) {
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("Error: ${snapshot.error}"),
+                  itemBuilder: (context, index) {
+                    final item = data[index];
+                    return itemBuilder(context, index, item);
+                  },
                 );
               }
               return const Center(child: CircularProgressIndicator());

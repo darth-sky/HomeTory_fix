@@ -1,6 +1,6 @@
 part of 'auth_cubit.dart';
 
-@immutable
+// @immutable
 class AuthState {
   final bool isLoggedIn;
   final String? accessToken;

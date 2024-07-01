@@ -2,36 +2,41 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:hometory/components/customSearchDelegate.dart';
 import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
 import 'package:hometory/dto/pengguna.dart';
-import 'package:hometory/screens/BarangScreen.dart';
-import 'package:hometory/screens/HomeScreen.dart';
-import 'package:hometory/screens/ProfileScreen.dart';
+import 'package:hometory/screens/barang_screen.dart';
+import 'package:hometory/screens/home_screen.dart';
+import 'package:hometory/screens/profile_screen.dart';
 import 'package:hometory/screens/google_map_page.dart';
-import 'package:hometory/screens/konfirmasiPro.dart';
+import 'package:hometory/screens/konfirmasi_pro.dart';
 import 'package:hometory/services/data_services.dart';
 
 class Myhomepage extends StatefulWidget {
-  const Myhomepage({Key? key, required this.title}) : super(key: key);
+  const Myhomepage({super.key, required this.title});
 
   final String title;
 
   @override
-  _MyhomepageState createState() => _MyhomepageState();
+  State<Myhomepage> createState() => _MyhomepageState();
 }
 
 class _MyhomepageState extends State<Myhomepage> {
   Future<List<Pengguna>>? _pengguna;
   int _selectedIndex = 0;
-  BottomNavigationBarType _bottomNavType = BottomNavigationBarType.shifting;
+  final BottomNavigationBarType _bottomNavType =
+      BottomNavigationBarType.shifting;
 
   @override
   void initState() {
     super.initState();
+    fetchUser(); //gimana caranya supaya setiap update ini jalan
+  }
+
+  void fetchUser() {
     final idPengguna = context.read<AuthCubit>().state.idPengguna;
+    setState(() {
     _pengguna = DataService.fetchUserById(idPengguna.toString());
+    });
   }
 
   final List<Widget> _screens = [
@@ -97,7 +102,7 @@ class _MyhomepageState extends State<Myhomepage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       final data = snapshot.data!;
-                      return Container(
+                      return SizedBox(
                         // Tambahkan Container sebagai parent
                         height: 45, // Atur tinggi Container sesuai kebutuhan
                         child: ListView.builder(
@@ -113,6 +118,7 @@ class _MyhomepageState extends State<Myhomepage> {
                                   MaterialPageRoute(
                                     builder: (context) => ProfileScreen(
                                       pengguna: item,
+                                      refreshMethod: fetchUser,
                                     ),
                                   ),
                                 );
@@ -136,7 +142,7 @@ class _MyhomepageState extends State<Myhomepage> {
                         context.read<AuthCubit>().state.idPengguna;
                     if (snapshot.hasData) {
                       final data = snapshot.data!;
-                      return Container(
+                      return SizedBox(
                         // Tambahkan Container sebagai parent
                         height: 45, // Atur tinggi Container sesuai kebutuhan
                         child: ListView.builder(

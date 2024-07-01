@@ -4,20 +4,22 @@ import 'package:flutter/material.dart';
 import 'package:hometory/dto/barang_dlm_container.dart';
 import 'package:hometory/dto/barang_dlm_ruangan.dart';
 import 'package:hometory/dto/containers.dart';
-import 'package:hometory/dto/lokasiBrgContainer.dart';
-import 'package:hometory/dto/lokasiBrgRuangan.dart';
+import 'package:hometory/dto/lokasi_brg_container.dart';
+import 'package:hometory/dto/lokasi_brg_ruangan.dart';
 import 'package:hometory/dto/pengguna.dart';
 import 'package:hometory/dto/ruangan.dart';
-import 'package:hometory/dto/totalBrgContainer.dart';
-import 'package:hometory/dto/totalBrgRuangan.dart';
-import 'package:hometory/dto/totalRuangan.dart';
+import 'package:hometory/dto/total_brg_container.dart';
+import 'package:hometory/dto/total_brg_ruangan.dart';
+import 'package:hometory/dto/total_ruangan.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:hometory/endpoints/endpoints.dart';
 
 class DataService {
-  static Future<List<Ruangan>> fetchRuangan() async {
-    final response = await http.get(Uri.parse(Endpoints.ruanganRead));
+  static Future<List<Ruangan>> fetchRuangan(String accessToken) async {
+    
+    final response = await http.get(Uri.parse(Endpoints.ruanganRead), headers: {'Authorization': 'Bearer $accessToken'});
+
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       return (data['datas'] as List<dynamic>)
@@ -57,13 +59,13 @@ class DataService {
     }
   }
 
-  static Future<List<locationBrgRuangan>> fetchBrgRuanganLocation(String idBarangRuangan) async {
+  static Future<List<LocationBrgRuangan>> fetchBrgRuanganLocation(String idBarangRuangan) async {
     final response = await http.get(Uri.parse('${Endpoints.barangDlmRuanganLocation}/$idBarangRuangan'));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       return (data['datas'] as List<dynamic>)
-          .map((item) => locationBrgRuangan.fromJson(item as Map<String, dynamic>))
+          .map((item) => LocationBrgRuangan.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
       // Tangani error
@@ -72,13 +74,13 @@ class DataService {
     }
   }
 
-  static Future<List<locationBrgContainer>> fetchBrgContainerLocation(String idBarangContainer) async {
+  static Future<List<LocationBrgContainer>> fetchBrgContainerLocation(String idBarangContainer) async {
     final response = await http.get(Uri.parse('${Endpoints.barangDlmContainerLocation}/$idBarangContainer'));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       return (data['datas'] as List<dynamic>)
-          .map((item) => locationBrgContainer.fromJson(item as Map<String, dynamic>))
+          .map((item) => LocationBrgContainer.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
       // Tangani error
@@ -87,13 +89,13 @@ class DataService {
     }
   }
 
-  static Future<List<totalRuangan>> fetchTotalRuangan(String idPengguna) async {
+  static Future<List<TotalRuangan>> fetchTotalRuangan(String idPengguna) async {
     final response = await http.get(Uri.parse('${Endpoints.userRuangan}/$idPengguna'));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       return (data['datas'] as List<dynamic>)
-          .map((item) => totalRuangan.fromJson(item as Map<String, dynamic>))
+          .map((item) => TotalRuangan.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
       // Tangani error
@@ -102,13 +104,13 @@ class DataService {
     }
   }
 
-  static Future<List<totalBrgContainer>> fetchTotalBrgContainer(String idPengguna) async {
+  static Future<List<TotalBrgContainer>> fetchTotalBrgContainer(String idPengguna) async {
     final response = await http.get(Uri.parse('${Endpoints.userBrgContainer}/$idPengguna'));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       return (data['datas'] as List<dynamic>)
-          .map((item) => totalBrgContainer.fromJson(item as Map<String, dynamic>))
+          .map((item) => TotalBrgContainer.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
       // Tangani error
@@ -117,13 +119,13 @@ class DataService {
     }
   }
 
-  static Future<List<totalBrgRuangan>> fetchTotalBrgRuangan(String idPengguna) async {
+  static Future<List<TotalBrgRuangan>> fetchTotalBrgRuangan(String idPengguna) async {
     final response = await http.get(Uri.parse('${Endpoints.userBrgRuangan}/$idPengguna'));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       return (data['datas'] as List<dynamic>)
-          .map((item) => totalBrgRuangan.fromJson(item as Map<String, dynamic>))
+          .map((item) => TotalBrgRuangan.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
       // Tangani error
@@ -151,8 +153,8 @@ class DataService {
   //   }
   // }
 
-  static Future<List<Containers>> fetchContainers() async {
-    final response = await http.get(Uri.parse(Endpoints.containerRead));
+  static Future<List<Containers>> fetchContainers(String accessToken) async {
+    final response = await http.get(Uri.parse(Endpoints.containerRead), headers: {'Authorization': 'Bearer $accessToken'});
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       return (data['datas'] as List<dynamic>)
@@ -183,7 +185,7 @@ class DataService {
   //   }
   // }
 
-  static Future<List<Barang_dlm_ruangan>> fetchBarangDlmRuangan(
+  static Future<List<BarangDlmRuangan>> fetchBarangDlmRuangan(
       int page, String search,
       {int? idRuangan}) async {
     String endpoint;
@@ -201,7 +203,7 @@ class DataService {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       return (data['datas'] as List<dynamic>)
           .map((item) =>
-              Barang_dlm_ruangan.fromJson(item as Map<String, dynamic>))
+              BarangDlmRuangan.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
       // Handle error
@@ -244,7 +246,7 @@ class DataService {
   //   }
   // }
 
-  static Future<List<Barang_dlm_container>> fetchBarangDlmContainer(
+  static Future<List<BarangDlmContainer>> fetchBarangDlmContainer(
       int page, String search,
       {int? idContainer}) async {
     String endpoint;
@@ -262,7 +264,7 @@ class DataService {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       return (data['datas'] as List<dynamic>)
           .map((item) =>
-              Barang_dlm_container.fromJson(item as Map<String, dynamic>))
+              BarangDlmContainer.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
       // Handle error
@@ -271,13 +273,13 @@ class DataService {
     }
   }
 
-  static Future<List<Barang_dlm_container>> fetchBarangDlmContainerByUser(
+  static Future<List<BarangDlmContainer>> fetchBarangDlmContainerByUser(
     int page,
     String search,
-    int id_pengguna,
+    int idPengguna,
   ) async {
     String endpoint;
-    endpoint = '${Endpoints.barangDlmContainerByUser}/$id_pengguna';
+    endpoint = '${Endpoints.barangDlmContainerByUser}/$idPengguna';
 
     final uri = Uri.parse(endpoint).replace(queryParameters: {
       'search': search,
@@ -286,19 +288,19 @@ class DataService {
     final response = await http.get(uri);
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body)['datas'];
-      return data.map((item) => Barang_dlm_container.fromJson(item)).toList();
+      return data.map((item) => BarangDlmContainer.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load data dari fetchBarangDlmContainerByuser');
     }
   }
 
-  static Future<List<Barang_dlm_ruangan>> fetchBarangDlmRuanganByUser(
+  static Future<List<BarangDlmRuangan>> fetchBarangDlmRuanganByUser(
     int page,
     String search,
-    int id_pengguna,
+    int idPengguna,
   ) async {
     String endpoint;
-    endpoint = '${Endpoints.barangDlmRuanganByUser}/$id_pengguna';
+    endpoint = '${Endpoints.barangDlmRuanganByUser}/$idPengguna';
 
     final uri = Uri.parse(endpoint).replace(queryParameters: {
       'search': search,
@@ -307,30 +309,30 @@ class DataService {
     final response = await http.get(uri);
     if (response.statusCode == 200) {
       final List<dynamic> data = json.decode(response.body)['datas'];
-      return data.map((item) => Barang_dlm_ruangan.fromJson(item)).toList();
+      return data.map((item) => BarangDlmRuangan.fromJson(item)).toList();
     } else {
       throw Exception('Failed to load data');
     }
   }
 
-  static Future<void> deleteRuangan(int id) async {
+  static Future<void> deleteRuangan(int id, String accessToken) async {
     await http.delete(Uri.parse('${Endpoints.ruanganDelete}/$id'),
-        headers: {'Content-type': 'application/json'});
+        headers: {'Content-type': 'application/json', 'Authorization': 'Bearer $accessToken'});
   }
 
-  static Future<void> deleteContainer(int id) async {
+  static Future<void> deleteContainer(int id, String accessToken) async {
     await http.delete(Uri.parse('${Endpoints.containerDelete}/$id'),
-        headers: {'Content-type': 'application/json'});
+        headers: {'Content-type': 'application/json', 'Authorization': 'Bearer $accessToken'});
   }
 
-  static Future<void> deleteBarangDlmRuangan(int id) async {
+  static Future<void> deleteBarangDlmRuangan(int id, String accessToken) async {
     await http.delete(Uri.parse('${Endpoints.barangDlmRuanganDelete}/$id'),
-        headers: {'Content-type': 'application/json'});
+        headers: {'Content-type': 'application/json', 'Authorization': 'Bearer $accessToken'});
   }
 
-  static Future<void> deleteBarangDlmContainer(int id) async {
+  static Future<void> deleteBarangDlmContainer(int id, String accessToken) async {
     await http.delete(Uri.parse('${Endpoints.barangDlmContainerDelete}/$id'),
-        headers: {'Content-type': 'application/json'});
+        headers: {'Content-type': 'application/json', 'Authorization': 'Bearer $accessToken'});
   }
 
   //post login with email and password
@@ -352,7 +354,7 @@ class DataService {
 
   static Future<http.Response> sendSignUpData(
       String email, String password) async {
-    final url = Uri.parse(Endpoints.SignUp);
+    final url = Uri.parse(Endpoints.signUp);
 
     final data = {'username': email, 'kata_sandi': password};
 
@@ -372,7 +374,7 @@ class DataService {
     return response;
   }
 
-  static Future<List<Barang_dlm_ruangan>> fetchAllBarangDlmRuangan(
+  static Future<List<BarangDlmRuangan>> fetchAllBarangDlmRuangan(
       int page) async {
     final uri =
         Uri.parse(Endpoints.barangDlmRuanganReadAll).replace(queryParameters: {
@@ -383,7 +385,7 @@ class DataService {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       return (data['datas'] as List<dynamic>)
           .map((item) =>
-              Barang_dlm_ruangan.fromJson(item as Map<String, dynamic>))
+              BarangDlmRuangan.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
       // Handle error
@@ -391,7 +393,7 @@ class DataService {
     }
   }
 
-  static Future<List<Barang_dlm_container>> fetchAllBarangDlmContainer(
+  static Future<List<BarangDlmContainer>> fetchAllBarangDlmContainer(
       int page) async {
     final uri = Uri.parse(Endpoints.barangDlmContainerReadAll)
         .replace(queryParameters: {
@@ -402,7 +404,7 @@ class DataService {
       final data = jsonDecode(response.body) as Map<String, dynamic>;
       return (data['datas'] as List<dynamic>)
           .map((item) =>
-              Barang_dlm_container.fromJson(item as Map<String, dynamic>))
+              BarangDlmContainer.fromJson(item as Map<String, dynamic>))
           .toList();
     } else {
       // Handle error

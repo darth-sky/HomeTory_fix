@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hometory/components/constants.dart';
 import 'package:hometory/cubit/auth/cubit/auth_cubit.dart';
-import 'package:hometory/screens/loginPage.dart';
+import 'package:hometory/screens/login_page.dart';
 import 'package:hometory/utils/secure_storage_util.dart';
 
 class AuthWrapper extends StatelessWidget {
   final Widget child;
-  const AuthWrapper({Key? key, required this.child}) : super(key: key);
+  const AuthWrapper({super.key, required this.child});
 
   @override
   Widget build(BuildContext context) {
